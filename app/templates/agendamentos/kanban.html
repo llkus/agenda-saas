@@ -2,22 +2,22 @@
 {% block title %}Kanban — Agenda SaaS{% endblock %}
 {% block content %}
 {% include "partials/_nav.html" %}
-<div class="max-w-7xl mx-auto mt-8 px-4">
-  <h1 class="text-lg font-semibold text-slate-800 mb-4">Kanban de agendamentos (hoje em diante)</h1>
+<div class="max-w-7xl mx-auto mt-8 px-4 pb-12">
+  <h1 class="text-lg font-medium text-off mb-4">Kanban de agendamentos (hoje em diante)</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
     {% for status in ordem_status %}
-    <div class="kanban-coluna bg-slate-200/60 rounded-lg p-3 min-h-[200px]" data-status="{{ status.value }}">
-      <h2 class="text-sm font-semibold text-slate-600 mb-3">
-        {{ status_labels[status] }} <span class="text-slate-400">({{ colunas[status]|length }})</span>
+    <div class="kanban-coluna bg-surf-1 border border-hair rounded-lg p-3 min-h-[200px]" data-status="{{ status.value }}">
+      <h2 class="text-sm font-medium text-txt-2 mb-3">
+        {{ status_labels[status] }} <span class="text-txt-3">({{ colunas[status]|length }})</span>
       </h2>
 
       <div class="space-y-2">
         {% for ag in colunas[status] %}
-        <div class="kanban-card bg-white rounded shadow-sm p-3 text-sm cursor-move" draggable="true" data-id="{{ ag.id }}">
-          <div class="font-medium text-slate-800">{{ ag.cliente.nome }}</div>
-          <div class="text-slate-500">{{ ag.servico.nome }}</div>
-          <div class="text-slate-400 text-xs mt-1">
+        <div class="kanban-card bg-surf-2 border border-hair-top rounded-md p-3 text-sm cursor-move hover:border-amber-500/50 transition-colors" draggable="true" data-id="{{ ag.id }}">
+          <div class="font-medium text-off">{{ ag.cliente.nome }}</div>
+          <div class="text-txt-2">{{ ag.servico.nome }}</div>
+          <div class="text-txt-3 text-xs mt-1">
             {{ ag.data_hora_inicio.strftime("%d/%m %H:%M") }}
           </div>
         </div>

@@ -1,22 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Login — Agenda SaaS{% endblock %}
 {% block content %}
-<div class="flex items-center justify-center mt-24">
-  <form method="post" class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-4">
+<div class="flex items-center justify-center mt-24 px-4">
+  <form method="post" class="bg-surf-1 border border-hair backdrop-blur rounded-lg p-8 w-full max-w-sm space-y-5 shadow-2xl">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <h1 class="text-xl font-semibold text-slate-800">Entrar</h1>
-
     <div>
-      <label class="block text-sm text-slate-600 mb-1" for="email">Email</label>
-      <input class="w-full border border-slate-300 rounded px-3 py-2" type="email" name="email" id="email" required autofocus>
+      <h1 class="text-xl font-medium text-off">Entrar</h1>
+      <p class="text-txt-3 text-sm mt-1">Acesse o painel do seu estabelecimento</p>
     </div>
 
     <div>
-      <label class="block text-sm text-slate-600 mb-1" for="senha">Senha</label>
-      <input class="w-full border border-slate-300 rounded px-3 py-2" type="password" name="senha" id="senha" required>
+      <label class="block text-sm text-txt-2 mb-1.5" for="email">Email</label>
+      <input class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 placeholder-txt-3 outline-none focus:border-amber-500 transition-colors"
+             type="email" name="email" id="email" required autofocus>
     </div>
 
-    <button class="w-full bg-slate-800 text-white rounded px-3 py-2 hover:bg-slate-700" type="submit">
+    <div>
+      <label class="block text-sm text-txt-2 mb-1.5" for="senha">Senha</label>
+      <input class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 placeholder-txt-3 outline-none focus:border-amber-500 transition-colors"
+             type="password" name="senha" id="senha" required>
+    </div>
+
+    <button class="w-full bg-amber-500 text-canvas font-medium rounded-chip px-4 py-2.5 hover:shadow-amber transition-shadow" type="submit">
       Entrar
     </button>
   </form>

@@ -2,42 +2,44 @@
 {% block title %}Clientes — Agenda SaaS{% endblock %}
 {% block content %}
 {% include "partials/_nav.html" %}
-<div class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-lg font-semibold text-slate-800">Clientes</h1>
-    <a href="{{ url_for('clientes.novo') }}" class="bg-slate-800 text-white text-sm px-4 py-2 rounded hover:bg-slate-700">
-      Novo cliente
-    </a>
-  </div>
+<div class="max-w-3xl mx-auto mt-8 px-4 pb-12">
+  <div class="bg-surf-1 border border-hair rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-lg font-medium text-off">Clientes</h1>
+      <a href="{{ url_for('clientes.novo') }}" class="bg-amber-500 text-canvas text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+        Novo cliente
+      </a>
+    </div>
 
-  <table class="w-full text-sm">
-    <thead>
-      <tr class="text-left text-slate-500 border-b">
-        <th class="py-2">Nome</th>
-        <th class="py-2">Telefone</th>
-        <th class="py-2"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for cliente in clientes %}
-      <tr class="border-b last:border-0">
-        <td class="py-2">{{ cliente.nome }}</td>
-        <td class="py-2">{{ cliente.telefone }}</td>
-        <td class="py-2 text-right space-x-3">
-          <a href="{{ url_for('clientes.editar', cliente_id=cliente.id) }}" class="text-slate-600 hover:underline">Editar</a>
-          <form method="post" action="{{ url_for('clientes.excluir', cliente_id=cliente.id) }}" class="inline"
-                onsubmit="return confirm('Excluir este cliente?');">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-txt-3 border-b border-hair">
+          <th class="py-2 font-normal">Nome</th>
+          <th class="py-2 font-normal">Telefone</th>
+          <th class="py-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cliente in clientes %}
+        <tr class="border-b border-hair last:border-0">
+          <td class="py-3 text-txt-1">{{ cliente.nome }}</td>
+          <td class="py-3 text-txt-2">{{ cliente.telefone }}</td>
+          <td class="py-3 text-right space-x-3">
+            <a href="{{ url_for('clientes.editar', cliente_id=cliente.id) }}" class="text-txt-2 hover:text-off transition-colors">Editar</a>
+            <form method="post" action="{{ url_for('clientes.excluir', cliente_id=cliente.id) }}" class="inline"
+                  onsubmit="return confirm('Excluir este cliente?');">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="text-red-600 hover:underline">Excluir</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="3" class="py-6 text-center text-slate-400">Nenhum cliente cadastrado.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+              <button type="submit" class="text-terra hover:text-terra-500 transition-colors">Excluir</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" class="py-8 text-center text-txt-3">Nenhum cliente cadastrado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

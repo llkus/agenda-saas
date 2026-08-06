@@ -2,36 +2,41 @@
 {% block title %}Novo horário — Agenda SaaS{% endblock %}
 {% block content %}
 {% include "partials/_nav.html" %}
-<div class="max-w-md mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
-  <h1 class="text-lg font-semibold text-slate-800 mb-4">Novo horário de disponibilidade</h1>
+<div class="max-w-md mx-auto mt-8 px-4 pb-12">
+  <div class="bg-surf-1 border border-hair rounded-lg p-6">
+    <h1 class="text-lg font-medium text-off mb-4">Novo horário de disponibilidade</h1>
 
-  <form method="post" class="space-y-4">
+    <form method="post" class="space-y-4">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div>
-      <label class="block text-sm text-slate-600 mb-1" for="dia_semana">Dia da semana</label>
-      <select class="w-full border border-slate-300 rounded px-3 py-2" name="dia_semana" id="dia_semana" required>
-        {% for i in range(7) %}
-        <option value="{{ i }}" {{ "selected" if form.dia_semana == i|string else "" }}>{{ dias_semana[i] }}</option>
-        {% endfor %}
-      </select>
-    </div>
+      <div>
+        <label class="block text-sm text-txt-2 mb-1.5" for="dia_semana">Dia da semana</label>
+        <select class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500 transition-colors"
+                name="dia_semana" id="dia_semana" required>
+          {% for i in range(7) %}
+          <option class="bg-canvas" value="{{ i }}" {{ "selected" if form.dia_semana == i|string else "" }}>{{ dias_semana[i] }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <div>
-      <label class="block text-sm text-slate-600 mb-1" for="hora_inicio">Início</label>
-      <input class="w-full border border-slate-300 rounded px-3 py-2" type="time" name="hora_inicio" id="hora_inicio"
-             value="{{ form.hora_inicio if form else '' }}" required>
-    </div>
+      <div>
+        <label class="block text-sm text-txt-2 mb-1.5" for="hora_inicio">Início</label>
+        <input class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500 transition-colors"
+               type="time" name="hora_inicio" id="hora_inicio"
+               value="{{ form.hora_inicio if form else '' }}" required>
+      </div>
 
-    <div>
-      <label class="block text-sm text-slate-600 mb-1" for="hora_fim">Fim</label>
-      <input class="w-full border border-slate-300 rounded px-3 py-2" type="time" name="hora_fim" id="hora_fim"
-             value="{{ form.hora_fim if form else '' }}" required>
-    </div>
+      <div>
+        <label class="block text-sm text-txt-2 mb-1.5" for="hora_fim">Fim</label>
+        <input class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500 transition-colors"
+               type="time" name="hora_fim" id="hora_fim"
+               value="{{ form.hora_fim if form else '' }}" required>
+      </div>
 
-    <div class="flex gap-3">
-      <button class="bg-slate-800 text-white rounded px-4 py-2 hover:bg-slate-700" type="submit">Salvar</button>
-      <a href="{{ url_for('disponibilidade.listar') }}" class="text-slate-500 px-4 py-2 hover:underline">Cancelar</a>
-    </div>
-  </form>
+      <div class="flex gap-3 pt-2">
+        <button class="bg-amber-500 text-canvas font-medium rounded-chip px-4 py-2 hover:shadow-amber transition-shadow" type="submit">Salvar</button>
+        <a href="{{ url_for('disponibilidade.listar') }}" class="text-txt-3 hover:text-off px-4 py-2 transition-colors">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
