@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Agenda — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-6xl mx-auto mt-8 px-4">
+  <div class="flex items-center gap-3 mb-4">
+    <a href="{{ url_for('agendamentos.agenda', semana=semana_anterior) }}" class="text-slate-500 hover:text-slate-800">&larr;</a>
+    <h1 class="text-lg font-semibold text-slate-800">
+      Semana de {{ semana_inicio.strftime("%d/%m") }} a {{ dias[-1].strftime("%d/%m/%Y") }}
+    </h1>
+    <a href="{{ url_for('agendamentos.agenda', semana=semana_seguinte) }}" class="text-slate-500 hover:text-slate-800">&rarr;</a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md overflow-x-auto p-3">
+    <div class="grid" style="grid-template-columns: 46px repeat(7, minmax(110px, 1fr)); gap: 2px;">
+      <div></div>
+      {% for dia in dias %}
+      <div class="text-center text-xs font-medium py-2 rounded {{ 'bg-slate-800 text-white' if dia == hoje else 'text-slate-500' }}">
+        {{ ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][dia.weekday()] }}<br>{{ dia.strftime("%d/%m") }}
+      </div>
+      {% endfor %}
+
+      {% set altura_px = (altura_total_min / 60 * 48)|round(0, "ceil")|int %}
+
+      <div class="relative" style="height: {{ altura_px }}px;">
+        {% for hora in horas_marcadores %}
+        <div class="absolute text-[10px] text-slate-400 right-1 -translate-y-1/2"
+             style="top: {{ ((hora * 60 - range_inicio_min) / altura_total_min * 100) }}%;">
+          {{ "%02d:00"|format(hora) }}
+        </div>
+        {% endfor %}
+      </div>
+
+      {% for dia in dias %}
+      <div class="relative border-l border-slate-100" style="height: {{ altura_px }}px;">
+        {% for hora in horas_marcadores %}
+        <div class="absolute w-full border-t border-slate-100"
+             style="top: {{ ((hora * 60 - range_inicio_min) / altura_total_min * 100) }}%;"></div>
+        {% endfor %}
+
+        {% for item in agendamentos_por_dia[dia] %}
+        {% set status_val = item.ag.status.value %}
+        <div class="absolute left-0.5 right-0.5 rounded px-1 py-0.5 text-[10px] leading-tight overflow-hidden border
+                    {{ 'bg-green-50 border-green-300 text-green-800' if status_val == 'confirmado'
+                       else 'bg-blue-50 border-blue-300 text-blue-800' if status_val == 'realizado'
+                       else 'bg-purple-50 border-purple-300 text-purple-800' if status_val == 'feedback'
+                       else 'bg-amber-50 border-amber-300 text-amber-800' }}"
+             style="top: {{ item.top_pct }}%; height: {{ item.altura_pct }}%;"
+             title="{{ item.ag.cliente.nome }} — {{ item.ag.servico.nome }}">
+          <div class="font-medium truncate">{{ item.ag.data_hora_inicio.strftime("%H:%M") }} {{ item.ag.cliente.nome }}</div>
+          <div class="truncate">{{ item.ag.servico.nome }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

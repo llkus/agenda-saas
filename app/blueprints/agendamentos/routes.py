@@ -1,10 +1,10 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_jwt_extended import get_current_user, jwt_required
 
 from app.extensions import db
-from app.models import Agendamento, Cliente, Servico, StatusAgendamento
+from app.models import Agendamento, Cliente, Disponibilidade, Servico, StatusAgendamento
 from app.utils.agenda import horarios_disponiveis
 
 agendamentos_bp = Blueprint("agendamentos", __name__, url_prefix="/painel/agendamentos")
@@ -120,6 +120,70 @@ def novo():
         return redirect(url_for("agendamentos.listar", data=dia.isoformat()))
 
     return render_template("agendamentos/form.html", clientes=clientes, servicos=servicos, form={})
+
+
+@agendamentos_bp.route("/agenda")
+@jwt_required()
+def agenda():
+    user = get_current_user()
+    ref = _parse_data(request.args.get("semana"), padrao=date.today())
+    semana_inicio = ref - timedelta(days=ref.weekday())
+    dias = [semana_inicio + timedelta(days=i) for i in range(7)]
+
+    inicio_periodo = datetime.combine(semana_inicio, datetime.min.time())
+    fim_periodo = datetime.combine(dias[-1], datetime.max.time())
+
+    agendamentos = (
+        Agendamento.query.filter(
+            Agendamento.tenant_id == user.tenant_id,
+            Agendamento.data_hora_inicio >= inicio_periodo,
+            Agendamento.data_hora_inicio <= fim_periodo,
+            Agendamento.status != StatusAgendamento.CANCELADO,
+        )
+        .order_by(Agendamento.data_hora_inicio)
+        .all()
+    )
+
+    janelas = Disponibilidade.query.filter_by(tenant_id=user.tenant_id).all()
+    if janelas:
+        range_inicio = min(j.hora_inicio for j in janelas)
+        range_fim = max(j.hora_fim for j in janelas)
+    else:
+        range_inicio = time(8, 0)
+        range_fim = time(20, 0)
+
+    range_inicio_min = range_inicio.hour * 60 + range_inicio.minute
+    range_fim_min = range_fim.hour * 60 + range_fim.minute
+    altura_total_min = max(range_fim_min - range_inicio_min, 60)
+
+    agendamentos_por_dia = {d: [] for d in dias}
+    for ag in agendamentos:
+        d = ag.data_hora_inicio.date()
+        if d not in agendamentos_por_dia:
+            continue
+        inicio_min = ag.data_hora_inicio.hour * 60 + ag.data_hora_inicio.minute
+        agendamentos_por_dia[d].append(
+            {
+                "ag": ag,
+                "top_pct": max(0, (inicio_min - range_inicio_min) / altura_total_min * 100),
+                "altura_pct": (ag.servico.duracao_min / altura_total_min) * 100,
+            }
+        )
+
+    horas_marcadores = list(range(range_inicio.hour, range_fim.hour + 1))
+
+    return render_template(
+        "agendamentos/agenda.html",
+        dias=dias,
+        semana_inicio=semana_inicio,
+        semana_anterior=(semana_inicio - timedelta(days=7)).isoformat(),
+        semana_seguinte=(semana_inicio + timedelta(days=7)).isoformat(),
+        agendamentos_por_dia=agendamentos_por_dia,
+        horas_marcadores=horas_marcadores,
+        range_inicio_min=range_inicio_min,
+        altura_total_min=altura_total_min,
+        hoje=date.today(),
+    )
 
 
 STATUS_LABELS = {
