@@ -1,14 +1,16 @@
-{% extends "base.html" %}
+{% extends "base_painel.html" %}
 {% block title %}Agenda — Agenda SaaS{% endblock %}
-{% block content %}
-{% include "partials/_nav.html" %}
-<div class="max-w-6xl mx-auto mt-8 px-4 pb-12">
-  <div class="flex items-center gap-3 mb-4">
-    <a href="{{ url_for('agendamentos.agenda', semana=semana_anterior) }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
-    <h1 class="text-lg font-medium text-off">
-      Semana de {{ semana_inicio.strftime("%d/%m") }} a {{ dias[-1].strftime("%d/%m/%Y") }}
-    </h1>
-    <a href="{{ url_for('agendamentos.agenda', semana=semana_seguinte) }}" class="text-txt-3 hover:text-off transition-colors">&rarr;</a>
+{% block painel_content %}
+<div class="max-w-6xl mx-auto pb-12">
+  <div class="mb-6">
+    <h1 class="text-3xl font-light text-off">Agenda</h1>
+    <div class="flex items-center gap-3 mt-1.5">
+      <a href="{{ url_for('agendamentos.agenda', semana=semana_anterior) }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
+      <p class="text-txt-2 text-sm">
+        Semana de {{ semana_inicio.strftime("%d/%m") }} a {{ dias[-1].strftime("%d/%m/%Y") }}
+      </p>
+      <a href="{{ url_for('agendamentos.agenda', semana=semana_seguinte) }}" class="text-txt-3 hover:text-off transition-colors">&rarr;</a>
+    </div>
   </div>
 
   <div class="bg-surf-1 border border-hair rounded-lg overflow-x-auto p-3">

@@ -1,8 +1,7 @@
-{% extends "base.html" %}
+{% extends "base_painel.html" %}
 {% block title %}{{ "Editar" if cliente else "Novo" }} cliente — Agenda SaaS{% endblock %}
-{% block content %}
-{% include "partials/_nav.html" %}
-<div class="max-w-md mx-auto mt-8 px-4 pb-12">
+{% block painel_content %}
+<div class="max-w-md mx-auto pb-12">
   <div class="bg-surf-1 border border-hair rounded-lg p-6">
     <h1 class="text-lg font-medium text-off mb-4">{{ "Editar" if cliente else "Novo" }} cliente</h1>
 

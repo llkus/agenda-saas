@@ -1,20 +1,22 @@
-{% extends "base.html" %}
+{% extends "base_painel.html" %}
 {% block title %}Agendamentos — Agenda SaaS{% endblock %}
-{% block content %}
-{% include "partials/_nav.html" %}
-<div class="max-w-4xl mx-auto mt-8 px-4 pb-12">
-  <div class="bg-surf-1 border border-hair rounded-lg p-6">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-3">
+{% block painel_content %}
+<div class="max-w-4xl mx-auto pb-12">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-light text-off">Agendamentos</h1>
+      <div class="flex items-center gap-3 mt-1.5">
         <a href="{{ url_for('agendamentos.listar', data=dia_anterior.isoformat()) }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
-        <h1 class="text-lg font-medium text-off">{{ dia.strftime("%d/%m/%Y") }}</h1>
+        <p class="text-txt-2 text-sm">{{ dia.strftime("%d/%m/%Y") }}</p>
         <a href="{{ url_for('agendamentos.listar', data=dia_seguinte.isoformat()) }}" class="text-txt-3 hover:text-off transition-colors">&rarr;</a>
       </div>
-      <a href="{{ url_for('agendamentos.novo') }}" class="bg-amber-500 text-canvas text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
-        Novo agendamento
-      </a>
     </div>
+    <a href="{{ url_for('agendamentos.novo') }}" class="bg-amber-500 text-canvas text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+      Novo agendamento
+    </a>
+  </div>
 
+  <div class="bg-surf-1 border border-hair rounded-lg p-6">
     <table class="w-full text-sm">
       <thead>
         <tr class="text-left text-txt-3 border-b border-hair">

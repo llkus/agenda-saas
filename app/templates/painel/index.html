@@ -1,11 +1,10 @@
-{% extends "base.html" %}
+{% extends "base_painel.html" %}
 {% block title %}Painel — Agenda SaaS{% endblock %}
-{% block content %}
-{% include "partials/_nav.html" %}
-<div class="max-w-5xl mx-auto mt-8 px-4 space-y-6 pb-12">
+{% block painel_content %}
+<div class="max-w-5xl mx-auto space-y-6 pb-12">
   <div>
-    <h1 class="text-xl font-medium text-off">Olá, {{ user.nome }}</h1>
-    <p class="text-txt-3 text-sm">{{ user.tenant.nome_estabelecimento }} — {{ hoje.strftime("%d/%m/%Y") }}</p>
+    <h1 class="text-3xl font-light text-off">Olá, {{ user.nome }}.</h1>
+    <p class="text-txt-3 text-sm mt-1">{{ user.tenant.nome_estabelecimento }} — {{ hoje.strftime("%d/%m/%Y") }}</p>
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">

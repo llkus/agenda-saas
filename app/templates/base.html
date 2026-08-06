@@ -45,10 +45,16 @@
     };
   </script>
   <style>
-    body { font-weight: 400; }
+    body {
+      font-weight: 400;
+      background-color: #0b100d;
+      background-image: radial-gradient(1100px 700px at 100% 0%, #e8a33d22 0%, transparent 55%),
+                         radial-gradient(900px 600px at 100% 0%, #3ea76b14 0%, transparent 60%);
+      background-attachment: fixed;
+    }
   </style>
 </head>
-<body class="bg-canvas text-txt-1 font-sans min-h-screen">
+<body class="text-txt-1 font-sans min-h-screen">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="max-w-md mx-auto mt-4 space-y-2 px-4">

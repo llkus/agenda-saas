@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_jwt_extended import get_current_user
 
 from app.config import Config
 from app.extensions import db, migrate, jwt, csrf
@@ -45,6 +46,13 @@ def create_app(config_class=Config):
     from app.cli import register_commands
 
     register_commands(app)
+
+    @app.context_processor
+    def inject_sidebar_user():
+        try:
+            return {"sidebar_user": get_current_user()}
+        except Exception:
+            return {"sidebar_user": None}
 
     @app.route("/")
     def hello():
