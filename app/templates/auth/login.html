@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Login — Agenda SaaS{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center mt-24">
+  <form method="post" class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-4">
+    <h1 class="text-xl font-semibold text-slate-800">Entrar</h1>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="email">Email</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="email" name="email" id="email" required autofocus>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="senha">Senha</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="password" name="senha" id="senha" required>
+    </div>
+
+    <button class="w-full bg-slate-800 text-white rounded px-3 py-2 hover:bg-slate-700" type="submit">
+      Entrar
+    </button>
+  </form>
+</div>
+{% endblock %}
