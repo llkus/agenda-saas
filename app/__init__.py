@@ -29,6 +29,7 @@ def create_app(config_class=Config):
     from app.blueprints.clientes import clientes_bp
     from app.blueprints.disponibilidade import disponibilidade_bp
     from app.blueprints.agendamentos import agendamentos_bp
+    from app.blueprints.api import api_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(painel_bp)
@@ -36,6 +37,7 @@ def create_app(config_class=Config):
     app.register_blueprint(clientes_bp)
     app.register_blueprint(disponibilidade_bp)
     app.register_blueprint(agendamentos_bp)
+    app.register_blueprint(api_bp)
 
     from app.cli import register_commands
 
