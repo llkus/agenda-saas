@@ -12,7 +12,7 @@ class Config:
     JWT_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_ACCESS_TOKEN_EXPIRES = 60 * 60 * 8  # 8 horas
-    # CSRF do JWT em cookie fica desligado por enquanto: painel é forms Jinja
-    # server-rendered, não SPA. Revisar na etapa de polimento (adicionar
-    # Flask-WTF CSRFProtect nos forms em vez do double-submit do JWT).
+    # CSRF do JWT em cookie fica desligado: usamos Flask-WTF CSRFProtect
+    # (baseado na sessão Flask) nos forms do painel em vez do double-submit
+    # do próprio JWT — mais simples pra forms Jinja server-rendered.
     JWT_COOKIE_CSRF_PROTECT = False

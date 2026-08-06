@@ -6,6 +6,7 @@
   <h1 class="text-lg font-semibold text-slate-800 mb-4">{{ "Editar" if cliente else "Novo" }} cliente</h1>
 
   <form method="post" class="space-y-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div>
       <label class="block text-sm text-slate-600 mb-1" for="nome">Nome</label>
       <input class="w-full border border-slate-300 rounded px-3 py-2" type="text" name="nome" id="nome"

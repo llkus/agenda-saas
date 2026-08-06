@@ -40,17 +40,20 @@
         <td class="py-2 text-right space-x-2">
           {% if ag.status == StatusAgendamento.A_CONFIRMAR %}
           <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="status" value="confirmado">
             <button type="submit" class="text-green-600 hover:underline">Confirmar</button>
           </form>
           {% endif %}
           {% if ag.status in (StatusAgendamento.A_CONFIRMAR, StatusAgendamento.CONFIRMADO) %}
           <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="status" value="realizado">
             <button type="submit" class="text-blue-600 hover:underline">Realizado</button>
           </form>
           <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline"
                 onsubmit="return confirm('Cancelar este agendamento?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="status" value="cancelado">
             <button type="submit" class="text-red-600 hover:underline">Cancelar</button>
           </form>

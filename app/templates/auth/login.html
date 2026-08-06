@@ -3,6 +3,7 @@
 {% block content %}
 <div class="flex items-center justify-center mt-24">
   <form method="post" class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <h1 class="text-xl font-semibold text-slate-800">Entrar</h1>
 
     <div>

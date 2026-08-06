@@ -2,6 +2,7 @@ from datetime import date, datetime, time, timedelta
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_jwt_extended import get_current_user, jwt_required
+from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
 from app.models import Agendamento, Cliente, Disponibilidade, Servico, StatusAgendamento
@@ -115,7 +116,14 @@ def novo():
             status=StatusAgendamento.A_CONFIRMAR,
         )
         db.session.add(agendamento)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            flash("Esse horário acabou de ser reservado por outra pessoa. Escolha outro.", "error")
+            return render_template(
+                "agendamentos/form.html", clientes=clientes, servicos=servicos, form=request.form
+            )
         flash("Agendamento criado.", "success")
         return redirect(url_for("agendamentos.listar", data=dia.isoformat()))
 

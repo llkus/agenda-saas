@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from flask import Blueprint, g, jsonify, request
+from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
 from app.models import Agendamento, Cliente, Servico, StatusAgendamento
@@ -121,7 +122,11 @@ def criar_agendamento():
         status=StatusAgendamento.A_CONFIRMAR,
     )
     db.session.add(agendamento)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"erro": "horário acabou de ser reservado por outra pessoa"}), 409
 
     return (
         jsonify(

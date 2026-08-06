@@ -45,7 +45,10 @@
 
       const resp = await fetch(`/painel/agendamentos/${id}/mover-status`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token() }}",
+        },
         body: JSON.stringify({ status }),
       });
 

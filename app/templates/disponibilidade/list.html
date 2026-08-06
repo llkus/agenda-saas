@@ -28,6 +28,7 @@
         <td class="py-2 text-right">
           <form method="post" action="{{ url_for('disponibilidade.excluir', janela_id=janela.id) }}" class="inline"
                 onsubmit="return confirm('Remover este horário?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="text-red-600 hover:underline">Remover</button>
           </form>
         </td>

@@ -34,6 +34,7 @@
         <td class="py-2 text-right space-x-3">
           <a href="{{ url_for('servicos.editar', servico_id=servico.id) }}" class="text-slate-600 hover:underline">Editar</a>
           <form method="post" action="{{ url_for('servicos.alternar_status', servico_id=servico.id) }}" class="inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="text-slate-600 hover:underline">
               {{ "Desativar" if servico.ativo else "Ativar" }}
             </button>

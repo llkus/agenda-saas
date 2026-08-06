@@ -1,7 +1,7 @@
 from flask import Flask
 
 from app.config import Config
-from app.extensions import db, migrate, jwt
+from app.extensions import db, migrate, jwt, csrf
 
 
 def create_app(config_class=Config):
@@ -11,6 +11,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    csrf.init_app(app)
 
     from app import models  # noqa: F401  (registra os models no metadata do SQLAlchemy)
     from app.models import User
@@ -21,7 +22,7 @@ def create_app(config_class=Config):
 
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
-        return User.query.get(int(jwt_data["sub"]))
+        return db.session.get(User, int(jwt_data["sub"]))
 
     from app.blueprints.auth import auth_bp
     from app.blueprints.painel import painel_bp
@@ -38,6 +39,8 @@ def create_app(config_class=Config):
     app.register_blueprint(disponibilidade_bp)
     app.register_blueprint(agendamentos_bp)
     app.register_blueprint(api_bp)
+    # API é autenticada por X-API-Key (sem cookie de sessão), então CSRF não se aplica
+    csrf.exempt(api_bp)
 
     from app.cli import register_commands
 
