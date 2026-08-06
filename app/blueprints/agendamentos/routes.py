@@ -122,6 +122,58 @@ def novo():
     return render_template("agendamentos/form.html", clientes=clientes, servicos=servicos, form={})
 
 
+STATUS_LABELS = {
+    StatusAgendamento.A_CONFIRMAR: "A Confirmar",
+    StatusAgendamento.CONFIRMADO: "Confirmado",
+    StatusAgendamento.REALIZADO: "Realizado",
+    StatusAgendamento.FEEDBACK: "Feedback",
+    StatusAgendamento.CANCELADO: "Cancelado",
+}
+
+
+@agendamentos_bp.route("/kanban")
+@jwt_required()
+def kanban():
+    user = get_current_user()
+    hoje = datetime.combine(date.today(), datetime.min.time())
+
+    agendamentos = (
+        Agendamento.query.filter(
+            Agendamento.tenant_id == user.tenant_id,
+            Agendamento.data_hora_inicio >= hoje,
+        )
+        .order_by(Agendamento.data_hora_inicio)
+        .all()
+    )
+
+    colunas = {status: [] for status in StatusAgendamento}
+    for ag in agendamentos:
+        colunas[ag.status].append(ag)
+
+    return render_template(
+        "agendamentos/kanban.html",
+        colunas=colunas,
+        status_labels=STATUS_LABELS,
+        ordem_status=list(StatusAgendamento),
+    )
+
+
+@agendamentos_bp.route("/<int:agendamento_id>/mover-status", methods=["POST"])
+@jwt_required()
+def mover_status(agendamento_id):
+    user = get_current_user()
+    agendamento = Agendamento.query.filter_by(id=agendamento_id, tenant_id=user.tenant_id).first_or_404()
+
+    payload = request.get_json(silent=True) or {}
+    try:
+        agendamento.status = StatusAgendamento(payload.get("status", ""))
+    except ValueError:
+        return jsonify({"erro": "status inválido"}), 400
+
+    db.session.commit()
+    return jsonify({"id": agendamento.id, "status": agendamento.status.value})
+
+
 @agendamentos_bp.route("/<int:agendamento_id>/status", methods=["POST"])
 @jwt_required()
 def alterar_status(agendamento_id):
