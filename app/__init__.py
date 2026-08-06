@@ -12,6 +12,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     jwt.init_app(app)
 
+    from app import models  # noqa: F401  (registra os models no metadata do SQLAlchemy)
+
     @app.route("/")
     def hello():
         return {"status": "ok", "service": "agenda-saas"}
