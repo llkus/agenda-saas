@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Agendamentos — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-4xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-3">
+      <a href="{{ url_for('agendamentos.listar', data=dia_anterior.isoformat()) }}" class="text-slate-500 hover:text-slate-800">&larr;</a>
+      <h1 class="text-lg font-semibold text-slate-800">{{ dia.strftime("%d/%m/%Y") }}</h1>
+      <a href="{{ url_for('agendamentos.listar', data=dia_seguinte.isoformat()) }}" class="text-slate-500 hover:text-slate-800">&rarr;</a>
+    </div>
+    <a href="{{ url_for('agendamentos.novo') }}" class="bg-slate-800 text-white text-sm px-4 py-2 rounded hover:bg-slate-700">
+      Novo agendamento
+    </a>
+  </div>
+
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-slate-500 border-b">
+        <th class="py-2">Horário</th>
+        <th class="py-2">Cliente</th>
+        <th class="py-2">Serviço</th>
+        <th class="py-2">Valor</th>
+        <th class="py-2">Status</th>
+        <th class="py-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ag in agendamentos %}
+      <tr class="border-b last:border-0">
+        <td class="py-2">{{ ag.data_hora_inicio.strftime("%H:%M") }} – {{ ag.data_hora_fim.strftime("%H:%M") }}</td>
+        <td class="py-2">{{ ag.cliente.nome }}</td>
+        <td class="py-2">{{ ag.servico.nome }}</td>
+        <td class="py-2">R$ {{ "%.2f"|format(ag.valor) }}</td>
+        <td class="py-2">
+          <span class="px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-600">
+            {{ ag.status.value.replace("_", " ") }}
+          </span>
+        </td>
+        <td class="py-2 text-right space-x-2">
+          {% if ag.status == StatusAgendamento.A_CONFIRMAR %}
+          <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
+            <input type="hidden" name="status" value="confirmado">
+            <button type="submit" class="text-green-600 hover:underline">Confirmar</button>
+          </form>
+          {% endif %}
+          {% if ag.status in (StatusAgendamento.A_CONFIRMAR, StatusAgendamento.CONFIRMADO) %}
+          <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
+            <input type="hidden" name="status" value="realizado">
+            <button type="submit" class="text-blue-600 hover:underline">Realizado</button>
+          </form>
+          <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline"
+                onsubmit="return confirm('Cancelar este agendamento?');">
+            <input type="hidden" name="status" value="cancelado">
+            <button type="submit" class="text-red-600 hover:underline">Cancelar</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="py-6 text-center text-slate-400">Nenhum agendamento neste dia.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

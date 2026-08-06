@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Disponibilidade — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-lg font-semibold text-slate-800">Disponibilidade</h1>
+    <a href="{{ url_for('disponibilidade.novo') }}" class="bg-slate-800 text-white text-sm px-4 py-2 rounded hover:bg-slate-700">
+      Novo horário
+    </a>
+  </div>
+
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-slate-500 border-b">
+        <th class="py-2">Dia</th>
+        <th class="py-2">Início</th>
+        <th class="py-2">Fim</th>
+        <th class="py-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for janela in janelas %}
+      <tr class="border-b last:border-0">
+        <td class="py-2">{{ dias_semana[janela.dia_semana] }}</td>
+        <td class="py-2">{{ janela.hora_inicio.strftime("%H:%M") }}</td>
+        <td class="py-2">{{ janela.hora_fim.strftime("%H:%M") }}</td>
+        <td class="py-2 text-right">
+          <form method="post" action="{{ url_for('disponibilidade.excluir', janela_id=janela.id) }}" class="inline"
+                onsubmit="return confirm('Remover este horário?');">
+            <button type="submit" class="text-red-600 hover:underline">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" class="py-6 text-center text-slate-400">Nenhum horário de disponibilidade cadastrado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

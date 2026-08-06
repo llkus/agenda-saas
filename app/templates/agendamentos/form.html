@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Novo agendamento — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-md mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <h1 class="text-lg font-semibold text-slate-800 mb-4">Novo agendamento</h1>
+
+  <form method="post" class="space-y-4">
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="cliente_id">Cliente</label>
+      <select class="w-full border border-slate-300 rounded px-3 py-2" name="cliente_id" id="cliente_id" required>
+        <option value="">Selecione...</option>
+        {% for cliente in clientes %}
+        <option value="{{ cliente.id }}" {{ "selected" if form.cliente_id == cliente.id|string else "" }}>{{ cliente.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="servico_id">Serviço</label>
+      <select class="w-full border border-slate-300 rounded px-3 py-2" name="servico_id" id="servico_id" required>
+        <option value="">Selecione...</option>
+        {% for servico in servicos %}
+        <option value="{{ servico.id }}" {{ "selected" if form.servico_id == servico.id|string else "" }}>
+          {{ servico.nome }} ({{ servico.duracao_min }} min)
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="data">Data</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="date" name="data" id="data"
+             value="{{ form.data if form else '' }}" required>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="horario">Horário</label>
+      <select class="w-full border border-slate-300 rounded px-3 py-2" name="horario" id="horario" required>
+        <option value="">Escolha cliente, serviço e data primeiro</option>
+      </select>
+    </div>
+
+    <div class="flex gap-3">
+      <button class="bg-slate-800 text-white rounded px-4 py-2 hover:bg-slate-700" type="submit">Salvar</button>
+      <a href="{{ url_for('agendamentos.listar') }}" class="text-slate-500 px-4 py-2 hover:underline">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const servicoEl = document.getElementById("servico_id");
+  const dataEl = document.getElementById("data");
+  const horarioEl = document.getElementById("horario");
+
+  async function atualizarHorarios() {
+    const servicoId = servicoEl.value;
+    const data = dataEl.value;
+
+    if (!servicoId || !data) {
+      horarioEl.innerHTML = '<option value="">Escolha cliente, serviço e data primeiro</option>';
+      return;
+    }
+
+    horarioEl.innerHTML = '<option value="">Carregando...</option>';
+
+    const params = new URLSearchParams({ servico_id: servicoId, data: data });
+    const resp = await fetch(`{{ url_for('agendamentos.horarios_disponiveis_endpoint') }}?${params}`);
+    const horarios = await resp.json();
+
+    if (horarios.length === 0) {
+      horarioEl.innerHTML = '<option value="">Nenhum horário disponível nesse dia</option>';
+      return;
+    }
+
+    horarioEl.innerHTML = horarios.map(h => `<option value="${h}">${h}</option>`).join("");
+  }
+
+  servicoEl.addEventListener("change", atualizarHorarios);
+  dataEl.addEventListener("change", atualizarHorarios);
+</script>
+{% endblock %}
