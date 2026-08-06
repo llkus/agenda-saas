@@ -32,6 +32,8 @@ def create_app(config_class=Config):
     from app.blueprints.disponibilidade import disponibilidade_bp
     from app.blueprints.agendamentos import agendamentos_bp
     from app.blueprints.api import api_bp
+    from app.blueprints.whatsapp import whatsapp_bp
+    from app.blueprints.conversas import conversas_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(painel_bp)
@@ -40,6 +42,8 @@ def create_app(config_class=Config):
     app.register_blueprint(disponibilidade_bp)
     app.register_blueprint(agendamentos_bp)
     app.register_blueprint(api_bp)
+    app.register_blueprint(whatsapp_bp)
+    app.register_blueprint(conversas_bp)
     # API é autenticada por X-API-Key (sem cookie de sessão), então CSRF não se aplica
     csrf.exempt(api_bp)
 

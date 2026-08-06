@@ -1,0 +1,38 @@
+{% extends "base_painel.html" %}
+{% block title %}Conversas — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-3xl mx-auto pb-12">
+  <div class="mb-6">
+    <h1 class="text-3xl font-light text-off">Conversas</h1>
+    <p class="text-txt-3 text-sm mt-1">Atendimentos feitos pelo agente via WhatsApp</p>
+  </div>
+
+  <div class="vidro rounded-lg p-2">
+    {% if ultimas_mensagens %}
+    <div class="divide-y divide-hair">
+      {% for m in ultimas_mensagens %}
+      <a href="{{ url_for('conversas.thread', telefone=m.telefone) }}"
+         class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-surf-1 transition-colors">
+        <div class="w-9 h-9 rounded-md bg-surf-2 border border-hair flex items-center justify-center shrink-0 text-[12px] font-medium text-leaf-300">
+          {{ (m.cliente.nome if m.cliente else m.telefone)[:2]|upper }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[13.5px] font-medium text-off truncate">{{ m.cliente.nome if m.cliente else m.telefone }}</div>
+          <div class="text-[12px] text-txt-3 truncate">{{ m.texto }}</div>
+        </div>
+        <span class="px-2.5 py-0.5 rounded-chip text-[11px] shrink-0
+                     {{ 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if m.remetente.value == 'robo'
+                        else 'bg-surf-2 border border-hair text-txt-2' if m.remetente.value == 'equipe'
+                        else 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' }}">
+          {{ m.remetente.value }}
+        </span>
+        <span class="tabular text-[12px] text-txt-3 shrink-0">{{ m.criado_em.strftime("%d/%m %H:%M") }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-txt-3 text-sm text-center py-8">Nenhuma conversa registrada ainda.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

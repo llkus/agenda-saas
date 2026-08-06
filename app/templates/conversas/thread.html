@@ -1,0 +1,35 @@
+{% extends "base_painel.html" %}
+{% block title %}Conversa — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-2xl mx-auto pb-12">
+  <div class="mb-6 flex items-center gap-3">
+    <a href="{{ url_for('conversas.listar') }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
+    <div>
+      <h1 class="text-2xl font-light text-off">{{ cliente.nome if cliente else telefone }}</h1>
+      <p class="text-txt-3 text-sm mt-1">{{ telefone }}</p>
+    </div>
+  </div>
+
+  <div class="vidro rounded-lg p-5 space-y-3">
+    {% for m in mensagens %}
+    {% if m.remetente.value == "cliente" %}
+    <div class="flex justify-start">
+      <div class="max-w-[80%] bg-surf-2 border border-hair rounded-[16px_16px_16px_5px] px-3.5 py-2.5 text-[13.5px] text-off">
+        {{ m.texto }}
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+      </div>
+    </div>
+    {% else %}
+    <div class="flex justify-end">
+      <div class="max-w-[80%] rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off"
+           style="background: linear-gradient(145deg, rgba(232,163,61,.13), rgba(62,167,107,.07)); border: 1px solid rgba(232,163,61,.24);">
+        <div class="eyebrow mb-1" style="font-size:9.5px; color: #f6c77c;">{{ "agente" if m.remetente.value == "robo" else "equipe" }}</div>
+        {{ m.texto }}
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

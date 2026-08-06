@@ -16,3 +16,7 @@ class Config:
     # (baseado na sessão Flask) nos forms do painel em vez do double-submit
     # do próprio JWT — mais simples pra forms Jinja server-rendered.
     JWT_COOKIE_CSRF_PROTECT = False
+
+    EVOLUTION_API_URL = os.environ.get("EVOLUTION_API_URL", "")
+    EVOLUTION_API_KEY = os.environ.get("EVOLUTION_API_KEY", "")
+    EVOLUTION_INSTANCE = os.environ.get("EVOLUTION_INSTANCE", "")

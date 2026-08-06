@@ -1,0 +1,64 @@
+{% extends "base_painel.html" %}
+{% block title %}WhatsApp — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-md mx-auto pb-12">
+  <div class="mb-6">
+    <h1 class="text-3xl font-light text-off">WhatsApp</h1>
+    <p class="text-txt-3 text-sm mt-1">Conecte o número que o agente vai usar pra atender</p>
+  </div>
+
+  <div class="vidro rounded-lg p-6 text-center">
+    <div id="status-badge" class="eyebrow mb-4">verificando status…</div>
+
+    <div id="qrcode-wrap" class="hidden">
+      <img id="qrcode-img" class="mx-auto rounded-md" width="260" height="260" alt="QR code do WhatsApp">
+      <p class="text-txt-3 text-[12.5px] mt-4">Abra o WhatsApp no celular → Aparelhos conectados → Conectar um aparelho, e escaneie este código.</p>
+    </div>
+
+    <div id="conectado-wrap" class="hidden">
+      <div class="w-14 h-14 rounded-full mx-auto flex items-center justify-center"
+           style="background: rgba(62,167,107,.16); border: 1px solid rgba(62,167,107,.34);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7fcb9f" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <p class="text-off text-[14px] mt-4">WhatsApp conectado</p>
+      <p class="text-txt-3 text-[12.5px] mt-1">O agente já pode receber e responder mensagens.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const badge = document.getElementById("status-badge");
+  const qrWrap = document.getElementById("qrcode-wrap");
+  const qrImg = document.getElementById("qrcode-img");
+  const okWrap = document.getElementById("conectado-wrap");
+
+  async function verificar() {
+    try {
+      const resp = await fetch("{{ url_for('whatsapp.status') }}");
+      const data = await resp.json();
+
+      if (data.state === "open") {
+        badge.textContent = "conectado";
+        qrWrap.classList.add("hidden");
+        okWrap.classList.remove("hidden");
+        return;
+      }
+
+      okWrap.classList.add("hidden");
+      qrWrap.classList.remove("hidden");
+      badge.textContent = data.state === "nao_configurado" ? "não configurado" : "aguardando leitura do QR code";
+
+      const qrResp = await fetch("{{ url_for('whatsapp.qrcode') }}");
+      const qrData = await qrResp.json();
+      if (qrData.qrcode) {
+        qrImg.src = qrData.qrcode;
+      }
+    } catch (e) {
+      badge.textContent = "erro ao consultar status";
+    }
+  }
+
+  verificar();
+  setInterval(verificar, 5000);
+</script>
+{% endblock %}

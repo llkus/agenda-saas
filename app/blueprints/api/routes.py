@@ -4,7 +4,7 @@ from flask import Blueprint, g, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.models import Agendamento, Cliente, Servico, StatusAgendamento
+from app.models import Agendamento, Cliente, Mensagem, RemetenteMensagem, Servico, StatusAgendamento
 from app.utils.agenda import horarios_disponiveis
 from app.utils.api_auth import require_api_key
 
@@ -189,3 +189,83 @@ def cancelar_agendamento(agendamento_id):
     agendamento.status = StatusAgendamento.CANCELADO
     db.session.commit()
     return jsonify({"id": agendamento.id, "status": agendamento.status.value})
+
+
+@api_bp.route("/mensagens", methods=["POST"])
+@require_api_key
+def registrar_mensagem():
+    payload = request.get_json(silent=True) or {}
+
+    telefone = (payload.get("telefone") or "").strip()
+    remetente_str = (payload.get("remetente") or "").strip()
+    texto = (payload.get("texto") or "").strip()
+
+    erros = []
+    if not telefone:
+        erros.append("telefone é obrigatório")
+    if not texto:
+        erros.append("texto é obrigatório")
+
+    remetente = None
+    try:
+        remetente = RemetenteMensagem(remetente_str)
+    except ValueError:
+        erros.append("remetente inválido (use cliente, robo ou equipe)")
+
+    if erros:
+        return jsonify({"erro": "; ".join(erros)}), 400
+
+    cliente = Cliente.query.filter_by(tenant_id=g.tenant.id, telefone=telefone).first()
+
+    mensagem = Mensagem(
+        tenant_id=g.tenant.id,
+        cliente_id=cliente.id if cliente else None,
+        telefone=telefone,
+        remetente=remetente,
+        texto=texto,
+    )
+    db.session.add(mensagem)
+    db.session.commit()
+
+    return (
+        jsonify(
+            {
+                "id": mensagem.id,
+                "telefone": mensagem.telefone,
+                "remetente": mensagem.remetente.value,
+                "texto": mensagem.texto,
+                "criado_em": mensagem.criado_em.isoformat(),
+            }
+        ),
+        201,
+    )
+
+
+@api_bp.route("/mensagens")
+@require_api_key
+def listar_mensagens():
+    telefone = request.args.get("telefone", "").strip()
+    if not telefone:
+        return jsonify({"erro": "parâmetro telefone é obrigatório"}), 400
+
+    limite = request.args.get("limite", default=20, type=int)
+    limite = max(1, min(limite, 100))
+
+    mensagens = (
+        Mensagem.query.filter_by(tenant_id=g.tenant.id, telefone=telefone)
+        .order_by(Mensagem.criado_em.desc())
+        .limit(limite)
+        .all()
+    )
+
+    return jsonify(
+        [
+            {
+                "id": m.id,
+                "remetente": m.remetente.value,
+                "texto": m.texto,
+                "criado_em": m.criado_em.isoformat(),
+            }
+            for m in reversed(mensagens)
+        ]
+    )

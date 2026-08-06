@@ -4,6 +4,7 @@ from app.models.servico import Servico
 from app.models.cliente import Cliente
 from app.models.agendamento import Agendamento, StatusAgendamento
 from app.models.disponibilidade import Disponibilidade
+from app.models.mensagem import Mensagem, RemetenteMensagem
 
 __all__ = [
     "Tenant",
@@ -13,4 +14,6 @@ __all__ = [
     "Agendamento",
     "StatusAgendamento",
     "Disponibilidade",
+    "Mensagem",
+    "RemetenteMensagem",
 ]
