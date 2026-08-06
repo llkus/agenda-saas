@@ -32,12 +32,37 @@
   const qrImg = document.getElementById("qrcode-img");
   const okWrap = document.getElementById("conectado-wrap");
 
-  async function verificar() {
+  let conectado = false;
+  let ultimoPedidoQrcode = 0;
+  const INTERVALO_RENOVAR_QRCODE_MS = 30000;
+
+  // IMPORTANTE: /whatsapp/qrcode chama o endpoint "connect" da Evolution API,
+  // que reinicia a sessão do WhatsApp. Chamar isso a cada poll de status
+  // interrompe o pareamento no meio (o QR "escaneado com sucesso" reaparecia
+  // porque a gente ficava pedindo um QR novo antes da sessão terminar de
+  // abrir). Por isso: status é leve e pode ser checado sempre; qrcode só é
+  // pedido uma vez no início e depois só se renovado ficar sem resposta.
+  async function buscarQrcodeSeNecessario() {
+    const agora = Date.now();
+    if (agora - ultimoPedidoQrcode < INTERVALO_RENOVAR_QRCODE_MS) return;
+    ultimoPedidoQrcode = agora;
+
+    const qrResp = await fetch("{{ url_for('whatsapp.qrcode') }}");
+    const qrData = await qrResp.json();
+    if (qrData.qrcode) {
+      qrImg.src = qrData.qrcode;
+    }
+  }
+
+  async function verificarStatus() {
+    if (conectado) return;
+
     try {
       const resp = await fetch("{{ url_for('whatsapp.status') }}");
       const data = await resp.json();
 
       if (data.state === "open") {
+        conectado = true;
         badge.textContent = "conectado";
         qrWrap.classList.add("hidden");
         okWrap.classList.remove("hidden");
@@ -48,17 +73,13 @@
       qrWrap.classList.remove("hidden");
       badge.textContent = data.state === "nao_configurado" ? "não configurado" : "aguardando leitura do QR code";
 
-      const qrResp = await fetch("{{ url_for('whatsapp.qrcode') }}");
-      const qrData = await qrResp.json();
-      if (qrData.qrcode) {
-        qrImg.src = qrData.qrcode;
-      }
+      await buscarQrcodeSeNecessario();
     } catch (e) {
       badge.textContent = "erro ao consultar status";
     }
   }
 
-  verificar();
-  setInterval(verificar, 5000);
+  verificarStatus();
+  setInterval(verificarStatus, 3000);
 </script>
 {% endblock %}
