@@ -7,12 +7,12 @@
       <h1 class="text-3xl font-light text-off">Disponibilidade</h1>
       <p class="text-txt-3 text-sm mt-1">{{ janelas|length }} horário{{ "s" if janelas|length != 1 else "" }} cadastrado{{ "s" if janelas|length != 1 else "" }}</p>
     </div>
-    <a href="{{ url_for('disponibilidade.novo') }}" class="bg-amber-500 text-canvas text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+    <a href="{{ url_for('disponibilidade.novo') }}" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
       Novo horário
     </a>
   </div>
 
-  <div class="bg-surf-1 border border-hair rounded-lg p-6">
+  <div class="vidro rounded-lg p-6">
     <table class="w-full text-sm">
       <thead>
         <tr class="text-left text-txt-3 border-b border-hair">

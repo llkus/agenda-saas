@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B100D">
   <title>{% block title %}Agenda SaaS{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,6 +15,7 @@
         extend: {
           colors: {
             canvas: "#0b100d",
+            "surf-0": "#0f1512",
             off: "#f2efe7",
             "txt-1": "#f2efe7",
             "txt-2": "#f2efe79e",
@@ -46,27 +48,77 @@
   </script>
   <style>
     body {
-      font-weight: 400;
-      background-color: #0b100d;
-      background-image: radial-gradient(1100px 700px at 100% 0%, #e8a33d22 0%, transparent 55%),
-                         radial-gradient(900px 600px at 100% 0%, #3ea76b14 0%, transparent 60%);
-      background-attachment: fixed;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.6;
+      background: #0b100d;
+      color: #f2efe7;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      position: relative;
     }
+    body::before {
+      content: "";
+      z-index: 0;
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(760px 520px at 12% -6%, #3ea76b33, transparent 62%),
+        radial-gradient(680px 480px at 92% 8%, #e8a33d26, transparent 62%),
+        radial-gradient(900px 700px at 50% 108%, #3ea76b1a, transparent 66%);
+    }
+    #app-root { position: relative; z-index: 1; }
+    :focus-visible { outline: 2px solid #e8a33d; outline-offset: 2px; border-radius: 4px; }
+    ::selection { background: #3ea76b; color: #0b100d; }
+    * { scrollbar-width: thin; scrollbar-color: #ffffff24 transparent; }
+
+    /* classes de identidade do Maestro — ver COMO-USAR-O-CSS.md */
+    .vidro {
+      background: #ffffff0b;
+      border: 1px solid #ffffff17;
+      border-top-color: #ffffff29;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: 0 18px 44px -18px #000000bf;
+    }
+    .vidro-solido {
+      border: 1px solid #ffffff17;
+      border-top-color: #ffffff29;
+      background: #151b18;
+    }
+    .eyebrow {
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #f2efe761;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .numero {
+      letter-spacing: -.04em;
+      font-variant-numeric: tabular-nums;
+      font-weight: 300;
+      line-height: 1.1;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body class="text-txt-1 font-sans min-h-screen">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="max-w-md mx-auto mt-4 space-y-2 px-4">
-        {% for category, message in messages %}
-          <div class="px-4 py-2 rounded-md text-sm border {{ 'bg-terra-500/10 border-terra-500/40 text-terra' if category == 'error' else 'bg-leaf-500/10 border-leaf-500/40 text-leaf-300' }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  <div id="app-root">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="max-w-md mx-auto mt-4 space-y-2 px-4">
+          {% for category, message in messages %}
+            <div class="px-4 py-2 rounded-md text-sm border {{ 'bg-terra-500/15 border-terra-500/30 text-terra' if category == 'error' else 'bg-leaf-500/15 border-leaf-500/30 text-leaf-300' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-  {% block content %}{% endblock %}
+    {% block content %}{% endblock %}
+  </div>
 </body>
 </html>

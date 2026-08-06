@@ -9,7 +9,7 @@
 
   <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
     {% for status in ordem_status %}
-    <div class="kanban-coluna bg-surf-1 border border-hair rounded-lg p-3 min-h-[200px]" data-status="{{ status.value }}">
+    <div class="kanban-coluna vidro rounded-lg p-3 min-h-[200px]" data-status="{{ status.value }}">
       <h2 class="text-sm font-medium text-txt-2 mb-3">
         {{ status_labels[status] }} <span class="text-txt-3">({{ colunas[status]|length }})</span>
       </h2>

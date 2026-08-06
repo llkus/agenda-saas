@@ -8,26 +8,26 @@
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
-      <div class="text-xs text-txt-3">Agendamentos hoje</div>
-      <div class="text-2xl font-medium text-off mt-1">{{ agendamentos_hoje|length }}</div>
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">Agendamentos hoje</div>
+      <div class="numero text-[28px] text-off mt-1">{{ agendamentos_hoje|length }}</div>
     </div>
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
-      <div class="text-xs text-txt-3">Faturado no mês</div>
-      <div class="text-2xl font-medium text-leaf-300 mt-1">R$ {{ "%.2f"|format(faturamento_mes) }}</div>
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">Faturado no mês</div>
+      <div class="numero text-[28px] text-leaf-300 mt-1">R$ {{ "%.2f"|format(faturamento_mes) }}</div>
     </div>
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
-      <div class="text-xs text-txt-3">Previsto (7 dias)</div>
-      <div class="text-2xl font-medium text-amber-300 mt-1">R$ {{ "%.2f"|format(previsto_semana) }}</div>
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">Previsto (7 dias)</div>
+      <div class="numero text-[28px] text-amber-300 mt-1">R$ {{ "%.2f"|format(previsto_semana) }}</div>
     </div>
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
-      <div class="text-xs text-txt-3">Clientes cadastrados</div>
-      <div class="text-2xl font-medium text-off mt-1">{{ total_clientes }}</div>
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">Clientes cadastrados</div>
+      <div class="numero text-[28px] text-off mt-1">{{ total_clientes }}</div>
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
+    <div class="vidro rounded-lg p-4">
       <h2 class="text-sm font-medium text-off mb-3">Agenda de hoje</h2>
       {% if agendamentos_hoje %}
       <ul class="divide-y divide-hair text-sm">
@@ -37,7 +37,7 @@
             <div class="font-medium text-off">{{ ag.data_hora_inicio.strftime("%H:%M") }} — {{ ag.cliente.nome }}</div>
             <div class="text-txt-3 text-xs">{{ ag.servico.nome }}</div>
           </div>
-          <span class="px-2.5 py-0.5 rounded-chip text-xs bg-surf-2 text-txt-2">{{ ag.status.value.replace("_", " ") }}</span>
+          <span class="px-2.5 py-0.5 rounded-chip text-xs bg-surf-2 border border-hair text-txt-2">{{ ag.status.value.replace("_", " ") }}</span>
         </li>
         {% endfor %}
       </ul>
@@ -46,7 +46,7 @@
       {% endif %}
     </div>
 
-    <div class="bg-surf-1 border border-hair rounded-lg p-4">
+    <div class="vidro rounded-lg p-4">
       <h2 class="text-sm font-medium text-off mb-3">Serviços mais agendados no mês</h2>
       {% if top_servicos %}
       <ul class="divide-y divide-hair text-sm">

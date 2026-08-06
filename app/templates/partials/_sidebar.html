@@ -1,43 +1,47 @@
-<aside class="w-[220px] shrink-0 border-r border-hair bg-surf-1 flex flex-col px-4 py-6">
-  <div class="flex items-center gap-2 px-2 mb-8">
-    <span class="flex gap-0.5">
-      <span class="w-1.5 h-4 rounded-full bg-leaf-500"></span>
-      <span class="w-1.5 h-4 rounded-full bg-leaf-700"></span>
-      <span class="w-1.5 h-4 rounded-full bg-off/30"></span>
-    </span>
-    <span class="text-off font-medium">Agenda</span>
+<aside class="vidro rounded-lg w-[224px] shrink-0 flex flex-col px-4 py-6">
+  <div class="flex items-center gap-2.5 px-2 mb-8">
+    <div class="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
+         style="background: linear-gradient(150deg, #3ea76b, #1f6b42); box-shadow: 0 0 30px -6px rgba(62,167,107,.6);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b100d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V7l5 5 3-4 3 4 5-5v12"/></svg>
+    </div>
+    <div>
+      <div class="text-off font-medium text-[15px] leading-none">Agenda</div>
+      <div class="eyebrow mt-1" style="letter-spacing:.1em;font-size:9.5px;">gestão</div>
+    </div>
   </div>
 
-  <nav class="flex-1 space-y-1 text-sm">
+  <nav class="flex-1 space-y-1 text-[13.5px]">
     {% set itens = [
-      ("painel.index", url_for("painel.index"), "Hoje", "activity"),
-      ("agendamentos.agenda", url_for("agendamentos.agenda"), "Agenda", "calendar"),
-      ("agendamentos.listar", url_for("agendamentos.listar"), "Agendamentos", "clock"),
-      ("agendamentos.kanban", url_for("agendamentos.kanban"), "Kanban", "columns"),
-      ("clientes.listar", url_for("clientes.listar"), "Clientes", "users"),
-      ("servicos.listar", url_for("servicos.listar"), "Serviços", "tag"),
-      ("disponibilidade.listar", url_for("disponibilidade.listar"), "Disponibilidade", "calendar-clock"),
+      (["painel.index"], url_for("painel.index"), "Hoje", "activity"),
+      (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda", "calendar"),
+      (["agendamentos.listar", "agendamentos.novo"], url_for("agendamentos.listar"), "Agendamentos", "clock"),
+      (["agendamentos.kanban"], url_for("agendamentos.kanban"), "Kanban", "columns"),
+      (["clientes.listar", "clientes.novo", "clientes.editar"], url_for("clientes.listar"), "Clientes", "users"),
+      (["servicos.listar", "servicos.novo", "servicos.editar"], url_for("servicos.listar"), "Serviços", "tag"),
+      (["disponibilidade.listar", "disponibilidade.novo"], url_for("disponibilidade.listar"), "Disponibilidade", "calendar-clock"),
     ] %}
 
-    {% for endpoint, href, label, icon in itens %}
-    {% set ativo = request.endpoint and request.endpoint.startswith(endpoint.split(".")[0] + ".") %}
+    {% for endpoints, href, label, icon in itens %}
+    {% set ativo = request.endpoint in endpoints %}
     <a href="{{ href }}"
-       class="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors {{ 'bg-surf-2 text-off' if ativo else 'text-txt-2 hover:text-off hover:bg-surf-1' }}">
+       class="flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors
+              {{ 'text-amber-300 border-amber-500/[.34]' if ativo else 'text-txt-2 border-transparent hover:text-off hover:bg-surf-1' }}"
+       style="{{ 'background: rgba(232,163,61,.16); box-shadow: 0 0 24px -8px rgba(232,163,61,.45);' if ativo else '' }}">
       <span class="shrink-0">
         {% if icon == "activity" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
         {% elif icon == "calendar" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>
         {% elif icon == "clock" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
         {% elif icon == "columns" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
         {% elif icon == "users" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 20c.7-3.4 3.2-5.5 6.2-5.5s5.5 2.1 6.2 5.5"/><circle cx="17.3" cy="9.3" r="2.4"/><path d="M15.5 14.9c2.4.2 4.3 2 4.9 4.7"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 20c.7-3.4 3.2-5.5 6.2-5.5s5.5 2.1 6.2 5.5"/><circle cx="17.3" cy="9.3" r="2.4"/><path d="M15.5 14.9c2.4.2 4.3 2 4.9 4.7"/></svg>
         {% elif icon == "tag" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 3.5H5A1.5 1.5 0 0 0 3.5 5v6.5a1.5 1.5 0 0 0 .44 1.06l8.5 8.5a1.5 1.5 0 0 0 2.12 0l6.5-6.5a1.5 1.5 0 0 0 0-2.12l-8.5-8.5a1.5 1.5 0 0 0-1.06-.44Z"/><circle cx="8" cy="8" r="1.3"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 3.5H5A1.5 1.5 0 0 0 3.5 5v6.5a1.5 1.5 0 0 0 .44 1.06l8.5 8.5a1.5 1.5 0 0 0 2.12 0l6.5-6.5a1.5 1.5 0 0 0 0-2.12l-8.5-8.5a1.5 1.5 0 0 0-1.06-.44Z"/><circle cx="8" cy="8" r="1.3"/></svg>
         {% elif icon == "calendar-clock" %}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 3v3M16 3v3"/><circle cx="12" cy="15" r="3.2"/><path d="M12 13.5V15l1.2.8"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 3v3M16 3v3"/><circle cx="12" cy="15" r="3.2"/><path d="M12 13.5V15l1.2.8"/></svg>
         {% endif %}
       </span>
       {{ label }}
@@ -47,12 +51,12 @@
 
   {% if sidebar_user %}
   <div class="border-t border-hair pt-4 mt-4">
-    <div class="text-[10px] tracking-wide text-txt-3 uppercase px-2 mb-1.5">Você está vendo</div>
+    <div class="eyebrow px-2 mb-1.5">Você está vendo</div>
     <div class="px-2">
-      <div class="text-sm text-off">{{ sidebar_user.tenant.nome_estabelecimento }}</div>
-      <div class="text-xs text-txt-3 mt-0.5">{{ sidebar_user.nome }}</div>
+      <div class="text-[13.5px] text-off">{{ sidebar_user.tenant.nome_estabelecimento }}</div>
+      <div class="text-[12px] text-txt-3 mt-0.5">{{ sidebar_user.nome }}</div>
     </div>
-    <a href="{{ url_for('auth.logout') }}" class="block px-2 mt-3 text-xs text-txt-3 hover:text-terra transition-colors">Sair</a>
+    <a href="{{ url_for('auth.logout') }}" class="block px-2 mt-3 text-[12px] text-txt-3 hover:text-terra transition-colors">Sair</a>
   </div>
   {% endif %}
 </aside>

@@ -13,11 +13,11 @@
     </div>
   </div>
 
-  <div class="bg-surf-1 border border-hair rounded-lg overflow-x-auto p-3">
+  <div class="vidro rounded-lg overflow-x-auto p-3">
     <div class="grid" style="grid-template-columns: 46px repeat(7, minmax(110px, 1fr)); gap: 2px;">
       <div></div>
       {% for dia in dias %}
-      <div class="text-center text-xs font-medium py-2 rounded-sm {{ 'bg-amber-500 text-canvas' if dia == hoje else 'text-txt-2' }}">
+      <div class="text-center text-xs font-medium py-2 rounded-sm {{ 'bg-amber-500 text-[#2b1b04]' if dia == hoje else 'text-txt-2' }}">
         {{ ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][dia.weekday()] }}<br>{{ dia.strftime("%d/%m") }}
       </div>
       {% endfor %}
@@ -43,9 +43,9 @@
         {% for item in agendamentos_por_dia[dia] %}
         {% set status_val = item.ag.status.value %}
         <div class="absolute left-0.5 right-0.5 rounded-sm px-1 py-0.5 text-[10px] leading-tight overflow-hidden border
-                    {{ 'bg-leaf-500/10 border-leaf-500/40 text-leaf-300' if status_val == 'confirmado'
-                       else 'bg-amber-500/10 border-amber-500/40 text-amber-300' if status_val == 'realizado'
-                       else 'bg-terra-500/10 border-terra-500/40 text-terra' if status_val == 'feedback'
+                    {{ 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' if status_val == 'confirmado'
+                       else 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if status_val == 'realizado'
+                       else 'bg-terra-500/15 border border-terra-500/30 text-terra' if status_val == 'feedback'
                        else 'bg-surf-2 border-hair-top text-txt-2' }}"
              style="top: {{ item.top_pct }}%; height: {{ item.altura_pct }}%;"
              title="{{ item.ag.cliente.nome }} — {{ item.ag.servico.nome }}">
