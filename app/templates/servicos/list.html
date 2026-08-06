@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Serviços — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-lg font-semibold text-slate-800">Serviços</h1>
+    <a href="{{ url_for('servicos.novo') }}" class="bg-slate-800 text-white text-sm px-4 py-2 rounded hover:bg-slate-700">
+      Novo serviço
+    </a>
+  </div>
+
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-slate-500 border-b">
+        <th class="py-2">Nome</th>
+        <th class="py-2">Duração</th>
+        <th class="py-2">Preço</th>
+        <th class="py-2">Status</th>
+        <th class="py-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for servico in servicos %}
+      <tr class="border-b last:border-0">
+        <td class="py-2">{{ servico.nome }}</td>
+        <td class="py-2">{{ servico.duracao_min }} min</td>
+        <td class="py-2">R$ {{ "%.2f"|format(servico.preco) }}</td>
+        <td class="py-2">
+          <span class="px-2 py-0.5 rounded text-xs {{ 'bg-green-100 text-green-700' if servico.ativo else 'bg-slate-100 text-slate-500' }}">
+            {{ "Ativo" if servico.ativo else "Inativo" }}
+          </span>
+        </td>
+        <td class="py-2 text-right space-x-3">
+          <a href="{{ url_for('servicos.editar', servico_id=servico.id) }}" class="text-slate-600 hover:underline">Editar</a>
+          <form method="post" action="{{ url_for('servicos.alternar_status', servico_id=servico.id) }}" class="inline">
+            <button type="submit" class="text-slate-600 hover:underline">
+              {{ "Desativar" if servico.ativo else "Ativar" }}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="py-6 text-center text-slate-400">Nenhum serviço cadastrado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

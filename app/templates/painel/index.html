@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Painel — Agenda SaaS{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto mt-16 bg-white p-8 rounded-lg shadow-md">
+{% include "partials/_nav.html" %}
+<div class="max-w-2xl mx-auto mt-8 bg-white p-8 rounded-lg shadow-md">
   <h1 class="text-xl font-semibold text-slate-800">Bem-vindo, {{ user.nome }}</h1>
   <p class="text-slate-500 mt-1">Estabelecimento: {{ user.tenant.nome_estabelecimento }}</p>
-  <a href="{{ url_for('auth.logout') }}" class="inline-block mt-6 text-sm text-slate-500 hover:text-slate-800 underline">
-    Sair
-  </a>
 </div>
 {% endblock %}

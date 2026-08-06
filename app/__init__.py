@@ -25,9 +25,13 @@ def create_app(config_class=Config):
 
     from app.blueprints.auth import auth_bp
     from app.blueprints.painel import painel_bp
+    from app.blueprints.servicos import servicos_bp
+    from app.blueprints.clientes import clientes_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(painel_bp)
+    app.register_blueprint(servicos_bp)
+    app.register_blueprint(clientes_bp)
 
     from app.cli import register_commands
 

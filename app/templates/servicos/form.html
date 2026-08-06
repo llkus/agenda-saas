@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar" if servico else "Novo" }} serviço — Agenda SaaS{% endblock %}
+{% block content %}
+{% include "partials/_nav.html" %}
+<div class="max-w-md mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <h1 class="text-lg font-semibold text-slate-800 mb-4">{{ "Editar" if servico else "Novo" }} serviço</h1>
+
+  <form method="post" class="space-y-4">
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="nome">Nome</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="text" name="nome" id="nome"
+             value="{{ servico.nome if servico else (form.nome if form else '') }}" required>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="duracao_min">Duração (minutos)</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="number" min="1" name="duracao_min" id="duracao_min"
+             value="{{ servico.duracao_min if servico else (form.duracao_min if form else '') }}" required>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-600 mb-1" for="preco">Preço (R$)</label>
+      <input class="w-full border border-slate-300 rounded px-3 py-2" type="text" inputmode="decimal" name="preco" id="preco"
+             value="{{ servico.preco if servico else (form.preco if form else '') }}" required>
+    </div>
+
+    <div class="flex gap-3">
+      <button class="bg-slate-800 text-white rounded px-4 py-2 hover:bg-slate-700" type="submit">Salvar</button>
+      <a href="{{ url_for('servicos.listar') }}" class="text-slate-500 px-4 py-2 hover:underline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
