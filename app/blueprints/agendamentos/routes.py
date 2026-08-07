@@ -7,15 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models import Agendamento, Cliente, Disponibilidade, Servico, StatusAgendamento
 from app.utils.agenda import horarios_disponiveis
+from app.utils.dates import parse_data as _parse_data
 
 agendamentos_bp = Blueprint("agendamentos", __name__, url_prefix="/painel/agendamentos")
-
-
-def _parse_data(data_str, padrao=None):
-    try:
-        return datetime.strptime(data_str, "%Y-%m-%d").date()
-    except (TypeError, ValueError):
-        return padrao
 
 
 @agendamentos_bp.route("/")

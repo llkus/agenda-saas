@@ -1,6 +1,5 @@
 from app.extensions import db
-from app.models import Servico, Tenant, User
-from app.utils.security import hash_senha
+from app.models import Servico
 
 
 def test_criar_servico(auth_client):

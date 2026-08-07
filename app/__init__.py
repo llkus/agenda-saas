@@ -2,17 +2,24 @@ from flask import Flask
 from flask_jwt_extended import get_current_user
 
 from app.config import Config
-from app.extensions import db, migrate, jwt, csrf
+from app.extensions import db, migrate, jwt, csrf, limiter
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    if not app.config["SECRET_KEY"] or not app.config["JWT_SECRET_KEY"]:
+        raise RuntimeError(
+            "SECRET_KEY / JWT_SECRET_KEY não definidas. Gere com: "
+            "python3 -c \"import secrets; print(secrets.token_hex(32))\" e coloque no .env"
+        )
+
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     csrf.init_app(app)
+    limiter.init_app(app)
 
     from app import models  # noqa: F401  (registra os models no metadata do SQLAlchemy)
     from app.models import User
@@ -57,6 +64,13 @@ def create_app(config_class=Config):
             return {"sidebar_user": get_current_user()}
         except Exception:
             return {"sidebar_user": None}
+
+    @app.after_request
+    def add_security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "same-origin"
+        return response
 
     @app.route("/")
     def hello():

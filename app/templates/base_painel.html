@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="flex min-h-screen items-stretch gap-4 p-4">
+<div class="flex flex-col md:flex-row min-h-screen items-stretch gap-3 md:gap-4 p-3 md:p-4">
   {% include "partials/_sidebar.html" %}
-  <main class="flex-1 min-w-0 px-6 py-6">
+  <main class="flex-1 min-w-0 px-3 py-4 md:px-6 md:py-6">
     {% block painel_content %}{% endblock %}
   </main>
 </div>

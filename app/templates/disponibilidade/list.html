@@ -13,7 +13,8 @@
   </div>
 
   <div class="vidro rounded-lg p-6">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[480px]">
       <thead>
         <tr class="text-left text-txt-3 border-b border-hair">
           <th class="py-2 font-normal">Dia</th>
@@ -43,6 +44,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 {% endblock %}

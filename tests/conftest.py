@@ -19,6 +19,7 @@ class TestConfig:
     JWT_ACCESS_TOKEN_EXPIRES = 60 * 60 * 8
     JWT_COOKIE_CSRF_PROTECT = False
     WTF_CSRF_ENABLED = False
+    RATELIMIT_ENABLED = False
     TESTING = True
 
 

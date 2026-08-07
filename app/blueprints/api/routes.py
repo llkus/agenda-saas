@@ -7,17 +7,11 @@ from app.extensions import db
 from app.models import Agendamento, Cliente, Mensagem, RemetenteMensagem, Servico, StatusAgendamento
 from app.utils.agenda import horarios_disponiveis
 from app.utils.api_auth import require_api_key
+from app.utils.dates import parse_data as _parse_data
 
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
 STATUS_ATIVOS = (StatusAgendamento.A_CONFIRMAR, StatusAgendamento.CONFIRMADO)
-
-
-def _parse_data(data_str):
-    try:
-        return datetime.strptime(data_str, "%Y-%m-%d").date()
-    except (TypeError, ValueError):
-        return None
 
 
 @api_bp.route("/servicos")
@@ -205,6 +199,8 @@ def registrar_mensagem():
         erros.append("telefone é obrigatório")
     if not texto:
         erros.append("texto é obrigatório")
+    elif len(texto) > 4000:
+        erros.append("texto excede o limite de 4000 caracteres")
 
     remetente = None
     try:

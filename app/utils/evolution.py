@@ -23,7 +23,7 @@ def status_conexao():
         )
         resp.raise_for_status()
         return resp.json().get("instance", {})
-    except requests.RequestException as exc:
+    except (requests.RequestException, ValueError) as exc:
         return {"state": "erro", "erro": str(exc)}
 
 
@@ -41,5 +41,5 @@ def obter_qrcode():
         resp.raise_for_status()
         data = resp.json()
         return data.get("base64") or data.get("qrcode", {}).get("base64")
-    except requests.RequestException:
+    except (requests.RequestException, ValueError):
         return None

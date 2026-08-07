@@ -1,16 +1,16 @@
-<aside class="vidro rounded-lg w-[224px] shrink-0 flex flex-col px-4 py-6">
-  <div class="flex items-center gap-2.5 px-2 mb-8">
+<aside class="vidro rounded-lg w-full md:w-[224px] md:shrink-0 flex flex-row md:flex-col items-center md:items-stretch gap-3 md:gap-0 px-3 py-3 md:px-4 md:py-6">
+  <div class="flex items-center gap-2.5 md:px-2 md:mb-8 shrink-0">
     <div class="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
          style="background: linear-gradient(150deg, #3ea76b, #1f6b42); box-shadow: 0 0 30px -6px rgba(62,167,107,.6);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b100d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V7l5 5 3-4 3 4 5-5v12"/></svg>
     </div>
-    <div>
+    <div class="hidden md:block">
       <div class="text-off font-medium text-[15px] leading-none">Agenda</div>
       <div class="eyebrow mt-1" style="letter-spacing:.1em;font-size:9.5px;">gestão</div>
     </div>
   </div>
 
-  <nav class="flex-1 space-y-1 text-[13.5px]">
+  <nav class="flex flex-row md:flex-col flex-1 min-w-0 gap-1 md:space-y-1 md:gap-0 text-[13.5px] overflow-x-auto md:overflow-visible">
     {% set itens = [
       (["painel.index"], url_for("painel.index"), "Hoje", "activity"),
       (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda", "calendar"),
@@ -26,7 +26,7 @@
     {% for endpoints, href, label, icon in itens %}
     {% set ativo = request.endpoint in endpoints %}
     <a href="{{ href }}"
-       class="flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors
+       class="flex items-center gap-2 md:gap-3 px-2.5 md:px-3 py-2 md:py-2.5 rounded-md border transition-colors shrink-0 whitespace-nowrap
               {{ 'text-amber-300 border-amber-500/[.34]' if ativo else 'text-txt-2 border-transparent hover:text-off hover:bg-surf-1' }}"
        style="{{ 'background: rgba(232,163,61,.16); box-shadow: 0 0 24px -8px rgba(232,163,61,.45);' if ativo else '' }}">
       <span class="shrink-0">
@@ -56,7 +56,10 @@
   </nav>
 
   {% if sidebar_user %}
-  <div class="border-t border-hair pt-4 mt-4">
+  <a href="{{ url_for('auth.logout') }}" class="md:hidden shrink-0 text-txt-3 hover:text-terra transition-colors p-2" title="Sair">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+  </a>
+  <div class="hidden md:block border-t border-hair pt-4 mt-4">
     <div class="eyebrow px-2 mb-1.5">Você está vendo</div>
     <div class="px-2">
       <div class="text-[13.5px] text-off">{{ sidebar_user.tenant.nome_estabelecimento }}</div>

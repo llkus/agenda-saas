@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies
 
+from app.extensions import limiter
 from app.models import User
 from app.utils.security import verificar_senha
 
@@ -8,6 +9,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
+@limiter.limit("10 per minute", methods=["POST"])
 def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
