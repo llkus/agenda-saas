@@ -4,7 +4,16 @@ from flask import Blueprint, g, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.models import Agendamento, Cliente, Mensagem, RemetenteMensagem, Servico, StatusAgendamento
+from app.models import (
+    Agendamento,
+    Cliente,
+    ConversaEstado,
+    Mensagem,
+    ModoConversa,
+    RemetenteMensagem,
+    Servico,
+    StatusAgendamento,
+)
 from app.utils.agenda import horarios_disponiveis
 from app.utils.api_auth import require_api_key
 from app.utils.dates import parse_data as _parse_data
@@ -235,6 +244,19 @@ def registrar_mensagem():
         ),
         201,
     )
+
+
+@api_bp.route("/conversas/modo")
+@require_api_key
+def conversa_modo():
+    """O n8n consulta isto antes do agente de IA responder: se não vier 'bot', ele não deve responder."""
+    telefone = request.args.get("telefone", "").strip()
+    if not telefone:
+        return jsonify({"erro": "parâmetro telefone é obrigatório"}), 400
+
+    estado = ConversaEstado.query.filter_by(tenant_id=g.tenant.id, telefone=telefone).first()
+    modo = estado.modo if estado else ModoConversa.BOT
+    return jsonify({"telefone": telefone, "modo": modo.value})
 
 
 @api_bp.route("/mensagens")

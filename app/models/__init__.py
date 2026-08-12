@@ -5,6 +5,8 @@ from app.models.cliente import Cliente
 from app.models.agendamento import Agendamento, StatusAgendamento
 from app.models.disponibilidade import Disponibilidade
 from app.models.mensagem import Mensagem, RemetenteMensagem
+from app.models.recorrencia import Recorrencia
+from app.models.conversa_estado import ConversaEstado, ModoConversa
 
 __all__ = [
     "Tenant",
@@ -16,4 +18,7 @@ __all__ = [
     "Disponibilidade",
     "Mensagem",
     "RemetenteMensagem",
+    "Recorrencia",
+    "ConversaEstado",
+    "ModoConversa",
 ]

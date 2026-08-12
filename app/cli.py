@@ -2,7 +2,7 @@ import click
 from flask import Flask
 
 from app.extensions import db
-from app.models import Tenant, User
+from app.models import Recorrencia, Tenant, User
 from app.utils.security import hash_senha
 
 
@@ -34,3 +34,15 @@ def register_commands(app: Flask):
         db.session.add(user)
         db.session.commit()
         click.echo(f"Usuário criado: id={user.id} email={user.email}")
+
+    @app.cli.command("gerar-recorrencias")
+    def gerar_recorrencias():
+        """Gera agendamentos dos próximos 60 dias para todas as regras ativas. Pensado para rodar via cron do sistema."""
+        from app.utils.recorrencia import gerar_agendamentos
+
+        total = 0
+        for recorrencia in Recorrencia.query.filter_by(ativo=True).all():
+            criados = gerar_agendamentos(recorrencia, dias_a_frente=60)
+            total += criados
+            click.echo(f"Recorrência {recorrencia.id} (tenant {recorrencia.tenant_id}): {criados} agendamento(s)")
+        click.echo(f"Total: {total} agendamento(s) gerado(s).")

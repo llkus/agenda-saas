@@ -20,11 +20,12 @@
           <div class="text-[13.5px] font-medium text-off truncate">{{ m.cliente.nome if m.cliente else m.telefone }}</div>
           <div class="text-[12px] text-txt-3 truncate">{{ m.texto }}</div>
         </div>
+        {% set modo = estados.get(m.telefone, ModoConversa.BOT) %}
         <span class="px-2.5 py-0.5 rounded-chip text-[11px] shrink-0
-                     {{ 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if m.remetente.value == 'robo'
-                        else 'bg-surf-2 border border-hair text-txt-2' if m.remetente.value == 'equipe'
+                     {{ 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if modo.value == 'humano'
+                        else 'bg-surf-2 border border-hair text-txt-3' if modo.value == 'encerrada'
                         else 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' }}">
-          {{ m.remetente.value }}
+          {{ "com a equipe" if modo.value == "humano" else "encerrada" if modo.value == "encerrada" else "automático" }}
         </span>
         <span class="tabular text-[12px] text-txt-3 shrink-0">{{ m.criado_em.strftime("%d/%m %H:%M") }}</span>
       </a>

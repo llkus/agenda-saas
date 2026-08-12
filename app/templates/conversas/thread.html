@@ -2,19 +2,65 @@
 {% block title %}Conversa — Agenda SaaS{% endblock %}
 {% block painel_content %}
 <div class="max-w-2xl mx-auto pb-12">
-  <div class="mb-6 flex items-center gap-3">
+  <div class="mb-4 flex items-center gap-3">
     <a href="{{ url_for('conversas.listar') }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
-    <div>
-      <h1 class="text-2xl font-light text-off">{{ cliente.nome if cliente else telefone }}</h1>
+    <div class="flex-1 min-w-0">
+      <h1 class="text-2xl font-light text-off truncate">{{ cliente.nome if cliente else telefone }}</h1>
       <p class="text-txt-3 text-sm mt-1">{{ telefone }}</p>
+    </div>
+    <div class="shrink-0">
+      {% if estado.modo == ModoConversa.BOT %}
+      <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="modo" value="humano">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+          Assumir conversa
+        </button>
+      </form>
+      {% elif estado.modo == ModoConversa.HUMANO %}
+      <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="modo" value="bot">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+          Devolver ao robô
+        </button>
+      </form>
+      {% else %}
+      <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="modo" value="bot">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+          Reabrir
+        </button>
+      </form>
+      {% endif %}
     </div>
   </div>
 
-  <div class="vidro rounded-lg p-5 space-y-3">
+  <p class="text-[12px] text-txt-3 mb-3">
+    {% if estado.modo == ModoConversa.BOT %}Robô respondendo automaticamente.
+    {% elif estado.modo == ModoConversa.HUMANO %}Automático pausado — você está respondendo.
+    {% else %}Conversa encerrada.{% endif %}
+  </p>
+
+  <div class="vidro rounded-lg p-5 space-y-3 max-h-[520px] overflow-y-auto">
     {% for m in mensagens %}
+    {% set dia_atual = m.criado_em.strftime("%Y-%m-%d") %}
+    {% if loop.first or dia_atual != mensagens[loop.index0 - 1].criado_em.strftime("%Y-%m-%d") %}
+    <p class="text-center text-[11px] tracking-wide text-txt-3 uppercase py-1">{{ m.criado_em.strftime("%d/%m/%Y") }}</p>
+    {% endif %}
+
     {% if m.remetente.value == "cliente" %}
     <div class="flex justify-start">
       <div class="max-w-[80%] bg-surf-2 border border-hair rounded-[16px_16px_16px_5px] px-3.5 py-2.5 text-[13.5px] text-off">
+        {{ m.texto }}
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+      </div>
+    </div>
+    {% elif m.remetente.value == "robo" %}
+    <div class="flex justify-end">
+      <div class="max-w-[80%] bg-surf-2 rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off">
+        <div class="eyebrow mb-1" style="font-size:9.5px;">robô</div>
         {{ m.texto }}
         <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
       </div>
@@ -23,7 +69,7 @@
     <div class="flex justify-end">
       <div class="max-w-[80%] rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off"
            style="background: linear-gradient(145deg, rgba(232,163,61,.13), rgba(62,167,107,.07)); border: 1px solid rgba(232,163,61,.24);">
-        <div class="eyebrow mb-1" style="font-size:9.5px; color: #f6c77c;">{{ "agente" if m.remetente.value == "robo" else "equipe" }}</div>
+        <div class="eyebrow mb-1" style="font-size:9.5px; color: #f6c77c;">equipe</div>
         {{ m.texto }}
         <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
       </div>
@@ -31,5 +77,17 @@
     {% endif %}
     {% endfor %}
   </div>
+
+  {% if estado.modo != ModoConversa.ENCERRADA %}
+  <form method="post" action="{{ url_for('conversas.enviar', telefone=telefone) }}" class="mt-3 vidro rounded-lg p-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="flex items-end gap-2">
+      <textarea name="texto" rows="2" required
+                placeholder="Escreva para o cliente. Isso pausa o automático e envia pelo WhatsApp de verdade."
+                class="flex-1 min-h-[52px] resize-none rounded-sm border border-hair-top bg-surf-1 px-2.5 py-2 text-[13.5px] leading-snug outline-none focus:border-amber-500 transition-colors text-off"></textarea>
+      <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2.5 hover:shadow-amber transition-shadow shrink-0">Enviar</button>
+    </div>
+  </form>
+  {% endif %}
 </div>
 {% endblock %}

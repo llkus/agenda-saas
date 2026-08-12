@@ -1,0 +1,51 @@
+{% extends "base_painel.html" %}
+{% block title %}Clientes fixos — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-3xl mx-auto pb-12">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-light text-off">Clientes fixos</h1>
+      <p class="text-txt-3 text-sm mt-1">Regras de agendamento recorrente</p>
+    </div>
+    <a href="{{ url_for('recorrencias.novo') }}" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+      Novo cliente fixo
+    </a>
+  </div>
+
+  <div class="vidro rounded-lg p-2">
+    {% if recorrencias %}
+    <div class="divide-y divide-hair">
+      {% for r in recorrencias %}
+      <div class="flex items-center gap-3 px-4 py-3">
+        <div class="flex-1 min-w-0">
+          <div class="text-[13.5px] font-medium text-off truncate">{{ r.cliente.nome }}</div>
+          <div class="text-[12px] text-txt-3 truncate">
+            {{ r.servico.nome }} · {{ dias_semana[r.dia_semana] }} às {{ r.hora.strftime("%H:%M") }}
+            · a cada {{ r.intervalo_semanas }} semana{{ "s" if r.intervalo_semanas != 1 else "" }}
+          </div>
+        </div>
+        <span class="px-2.5 py-0.5 rounded-chip text-[11px] shrink-0
+                     {{ 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' if r.ativo else 'bg-surf-2 border border-hair text-txt-3' }}">
+          {{ "ativo" if r.ativo else "pausado" }}
+        </span>
+        <form method="post" action="{{ url_for('recorrencias.gerar', recorrencia_id=r.id) }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="text-txt-2 hover:text-off transition-colors text-[12.5px]">Gerar próximas</button>
+        </form>
+        <form method="post" action="{{ url_for('recorrencias.alternar', recorrencia_id=r.id) }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="text-txt-2 hover:text-off transition-colors text-[12.5px]">{{ "Pausar" if r.ativo else "Reativar" }}</button>
+        </form>
+        <form method="post" action="{{ url_for('recorrencias.excluir', recorrencia_id=r.id) }}" class="inline" onsubmit="return confirm('Excluir esta regra?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="text-terra hover:text-terra-500 transition-colors text-[12.5px]">Excluir</button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-txt-3 text-sm text-center py-8">Nenhum cliente fixo cadastrado.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
