@@ -1,0 +1,50 @@
+{% extends "base_painel.html" %}
+{% block title %}Demonstrativos — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-3xl mx-auto pb-12">
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div>
+      <h1 class="text-3xl font-light text-off">Demonstrativo de resultado</h1>
+      <p class="text-txt-3 text-sm mt-1 capitalize">{{ rotulo_periodo }}, em regime de caixa (o que entrou e saiu)</p>
+    </div>
+    <form method="get" class="flex items-center gap-2">
+      <input type="month" name="mes" value="{{ mes_ref.strftime('%Y-%m') }}" onchange="this.form.submit()"
+             class="bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
+    </form>
+  </div>
+
+  <div class="vidro rounded-lg overflow-x-auto">
+    <div class="min-w-[520px]">
+      <div class="grid gap-3 border-b border-hair px-4 py-2" style="grid-template-columns: minmax(0,1fr) 140px 84px;">
+        <span class="eyebrow">linha</span>
+        <span class="eyebrow text-right">valor</span>
+        <span class="eyebrow text-right">% receita</span>
+      </div>
+      {% for l in dre.linhas %}
+      <div class="grid items-baseline gap-3 px-4 {{ 'border-t border-hair py-2.5 bg-surf-1' if l.forte else 'py-1.5' }}" style="grid-template-columns: minmax(0,1fr) 140px 84px;">
+        <span class="flex items-baseline gap-2 min-w-0">
+          <span class="tabular w-9 shrink-0 text-[11px] text-txt-3">{{ "( " + l.sinal + " )" if l.sinal else "" }}</span>
+          <span class="truncate text-[13.5px] {{ 'font-medium text-off' if l.forte else 'text-txt-2' }}">{{ l.rotulo }}</span>
+        </span>
+        <span class="tabular text-right text-[13.5px] {{ 'font-medium' if l.forte else '' }} {{ 'text-leaf-300' if l.valor >= 0 and l.forte else 'text-terra' if l.valor < 0 and l.forte else 'text-txt-2' }}">
+          R$ {{ "%.2f"|format(l.valor) }}
+        </span>
+        <span class="tabular text-right text-[13px] {{ 'font-medium text-off' if l.forte else 'text-txt-3' }}">{{ "%.1f"|format(l.percentual) }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="grid gap-3 sm:grid-cols-2 mt-5">
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">margem de contribuição</div>
+      <div class="numero text-[24px] mt-1 text-off">{{ "%.1f"|format(dre.margem_contribuicao_pct) }}%</div>
+      <p class="text-txt-3 text-[12px] mt-1">o que sobra de cada real vendido depois do custo variável</p>
+    </div>
+    <div class="vidro rounded-lg p-4">
+      <div class="eyebrow">resultado do período</div>
+      <div class="numero text-[24px] mt-1 {{ 'text-leaf-300' if dre.resultado >= 0 else 'text-terra' }}">R$ {{ "%.2f"|format(dre.resultado) }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

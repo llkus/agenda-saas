@@ -1,0 +1,38 @@
+{% extends "base_painel.html" %}
+{% block title %}Mês a mês — Agenda SaaS{% endblock %}
+{% block painel_content %}
+<div class="max-w-4xl mx-auto pb-12">
+  <div class="mb-6">
+    <h1 class="text-3xl font-light text-off">Mês a mês</h1>
+    <p class="text-txt-3 text-sm mt-1">Os últimos {{ dados|length }} meses, lado a lado</p>
+  </div>
+
+  <div class="vidro rounded-lg overflow-x-auto p-3">
+    <div class="grid gap-2" style="grid-template-columns: minmax(140px,1.3fr) repeat({{ dados|length }}, minmax(90px,1fr));">
+      <span class="eyebrow">linha</span>
+      {% for m in dados %}
+      <span class="eyebrow text-right">{{ m.rotulo }}{{ "*" if m.em_curso else "" }}</span>
+      {% endfor %}
+
+      <span class="text-[13px] text-txt-2 py-1.5">Receita</span>
+      {% for m in dados %}
+      <span class="tabular text-right text-[12.5px] text-leaf-300 py-1.5">R$ {{ "%.0f"|format(m.receita) }}</span>
+      {% endfor %}
+
+      <span class="text-[13px] text-txt-2 py-1.5">Despesas</span>
+      {% for m in dados %}
+      <span class="tabular text-right text-[12.5px] text-terra py-1.5">R$ {{ "%.0f"|format(m.despesas) }}</span>
+      {% endfor %}
+
+      <span class="text-[13px] font-medium text-off py-1.5 border-t border-hair mt-1 pt-2">Resultado</span>
+      {% for m in dados %}
+      <span class="tabular text-right text-[13px] font-medium py-1.5 border-t border-hair mt-1 pt-2 {{ 'text-leaf-300' if m.resultado >= 0 else 'text-terra' }}">R$ {{ "%.0f"|format(m.resultado) }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if dados and dados[-1].em_curso %}
+  <p class="text-txt-3 text-xs mt-2">* mês em curso: vai do dia 1 até hoje, ainda não fechou.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -16,10 +16,15 @@
       (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda", "calendar"),
       (["agendamentos.listar", "agendamentos.novo"], url_for("agendamentos.listar"), "Agendamentos", "clock"),
       (["agendamentos.kanban"], url_for("agendamentos.kanban"), "Kanban", "columns"),
+      (["recorrencias.listar", "recorrencias.novo"], url_for("recorrencias.listar"), "Clientes fixos", "repeat"),
       (["clientes.listar", "clientes.novo", "clientes.editar"], url_for("clientes.listar"), "Clientes", "users"),
       (["servicos.listar", "servicos.novo", "servicos.editar"], url_for("servicos.listar"), "Serviços", "tag"),
       (["disponibilidade.listar", "disponibilidade.novo"], url_for("disponibilidade.listar"), "Disponibilidade", "calendar-clock"),
       (["conversas.listar", "conversas.thread"], url_for("conversas.listar"), "Conversas", "chat"),
+      (["financeiro.caixa"], url_for("financeiro.caixa"), "Caixa", "cash"),
+      (["financeiro.plano_de_contas"], url_for("financeiro.plano_de_contas"), "Plano de contas", "list"),
+      (["financeiro.demonstrativos"], url_for("financeiro.demonstrativos"), "Demonstrativos", "chart"),
+      (["financeiro.mes_a_mes_view"], url_for("financeiro.mes_a_mes_view"), "Mês a mês", "grid"),
       (["whatsapp.index"], url_for("whatsapp.index"), "WhatsApp", "phone"),
     ] %}
 
@@ -44,8 +49,18 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 3.5H5A1.5 1.5 0 0 0 3.5 5v6.5a1.5 1.5 0 0 0 .44 1.06l8.5 8.5a1.5 1.5 0 0 0 2.12 0l6.5-6.5a1.5 1.5 0 0 0 0-2.12l-8.5-8.5a1.5 1.5 0 0 0-1.06-.44Z"/><circle cx="8" cy="8" r="1.3"/></svg>
         {% elif icon == "calendar-clock" %}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 3v3M16 3v3"/><circle cx="12" cy="15" r="3.2"/><path d="M12 13.5V15l1.2.8"/></svg>
+        {% elif icon == "repeat" %}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-2a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v2a4 4 0 0 1-4 4H3"/></svg>
         {% elif icon == "chat" %}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg>
+        {% elif icon == "cash" %}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.75"/><path d="M6.5 6v0M17.5 18v0"/></svg>
+        {% elif icon == "list" %}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>
+        {% elif icon == "chart" %}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4M3 20h18"/><path d="M7 16v-4M12 16V8M17 16v-7"/></svg>
+        {% elif icon == "grid" %}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         {% elif icon == "phone" %}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h2M9 8v8M13 5v14M17 9v6M20 12h.01"/></svg>
         {% endif %}

@@ -7,6 +7,18 @@ from app.models.disponibilidade import Disponibilidade
 from app.models.mensagem import Mensagem, RemetenteMensagem
 from app.models.recorrencia import Recorrencia
 from app.models.conversa_estado import ConversaEstado, ModoConversa
+from app.models.financeiro import (
+    Caixa,
+    CaixaMovimento,
+    ContaFinanceira,
+    ContaPagar,
+    FormaPagamento,
+    GrupoDRE,
+    LancamentoFinanceiro,
+    OrigemLancamento,
+    PlanoDeContas,
+    TipoLancamento,
+)
 
 __all__ = [
     "Tenant",
@@ -21,4 +33,14 @@ __all__ = [
     "Recorrencia",
     "ConversaEstado",
     "ModoConversa",
+    "Caixa",
+    "CaixaMovimento",
+    "ContaFinanceira",
+    "ContaPagar",
+    "FormaPagamento",
+    "GrupoDRE",
+    "LancamentoFinanceiro",
+    "OrigemLancamento",
+    "PlanoDeContas",
+    "TipoLancamento",
 ]
