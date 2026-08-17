@@ -4,7 +4,7 @@ from sqlalchemy import func
 
 from app.extensions import db
 from app.models import Cliente, ConversaEstado, Mensagem, ModoConversa, RemetenteMensagem
-from app.utils.evolution import enviar_mensagem
+from app.utils.evolution import enviar_mensagem, status_conexao
 
 conversas_bp = Blueprint("conversas", __name__, url_prefix="/painel/conversas")
 
@@ -21,6 +21,9 @@ def _estado(tenant_id: int, telefone: str) -> ConversaEstado:
 @conversas_bp.route("/")
 @jwt_required()
 def listar():
+    if status_conexao().get("state") != "open":
+        return render_template("conversas/conectar.html")
+
     user = get_current_user()
 
     ultima_por_telefone = (

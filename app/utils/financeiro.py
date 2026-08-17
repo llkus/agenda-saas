@@ -6,6 +6,7 @@ from decimal import Decimal
 from sqlalchemy import func
 
 from app.extensions import db
+from app.utils.dates import mes_abreviado_pt
 from app.models import (
     Caixa,
     CaixaMovimento,
@@ -203,7 +204,7 @@ def mes_a_mes(tenant_id: int, n_meses: int = 6) -> list[dict]:
         resultado.append(
             {
                 "mes": inicio_mes,
-                "rotulo": inicio_mes.strftime("%b/%y"),
+                "rotulo": mes_abreviado_pt(inicio_mes),
                 "receita": resumo.receita,
                 "despesas": resumo.despesas,
                 "resultado": resumo.resultado,
@@ -234,7 +235,7 @@ def projecao_contas_pagar(tenant_id: int, n_meses: int = 6) -> list[dict]:
             (c.valor for c in abertas if c.recorrente_mensal and c.vencimento < inicio_mes),
             Decimal("0"),
         )
-        resultado.append({"mes": inicio_mes, "rotulo": inicio_mes.strftime("%b/%y"), "total": total + estimado, "estimado": estimado})
+        resultado.append({"mes": inicio_mes, "rotulo": mes_abreviado_pt(inicio_mes), "total": total + estimado, "estimado": estimado})
     return resultado
 
 

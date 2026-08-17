@@ -1,8 +1,8 @@
 {% extends "base_painel.html" %}
 {% block title %}Conversa — Agenda SaaS{% endblock %}
 {% block painel_content %}
-<div class="max-w-2xl mx-auto pb-12">
-  <div class="mb-4 flex items-center gap-3">
+<div class="max-w-2xl mx-auto flex flex-col md:h-[calc(100vh-5rem)] pb-4 md:pb-0">
+  <div class="mb-4 flex items-center gap-3 shrink-0">
     <a href="{{ url_for('conversas.listar') }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
     <div class="flex-1 min-w-0">
       <h1 class="text-2xl font-light text-off truncate">{{ cliente.nome if cliente else telefone }}</h1>
@@ -37,13 +37,13 @@
     </div>
   </div>
 
-  <p class="text-[12px] text-txt-3 mb-3">
+  <p class="text-[12px] text-txt-3 mb-3 shrink-0">
     {% if estado.modo == ModoConversa.BOT %}Robô respondendo automaticamente.
     {% elif estado.modo == ModoConversa.HUMANO %}Automático pausado — você está respondendo.
     {% else %}Conversa encerrada.{% endif %}
   </p>
 
-  <div class="vidro rounded-lg p-5 space-y-3 max-h-[520px] overflow-y-auto">
+  <div class="vidro rounded-lg p-5 space-y-3 max-h-[48vh] md:max-h-none md:flex-1 md:min-h-0 overflow-y-auto">
     {% for m in mensagens %}
     {% set dia_atual = m.criado_em.strftime("%Y-%m-%d") %}
     {% if loop.first or dia_atual != mensagens[loop.index0 - 1].criado_em.strftime("%Y-%m-%d") %}
@@ -79,7 +79,7 @@
   </div>
 
   {% if estado.modo != ModoConversa.ENCERRADA %}
-  <form method="post" action="{{ url_for('conversas.enviar', telefone=telefone) }}" class="mt-3 vidro rounded-lg p-3">
+  <form method="post" action="{{ url_for('conversas.enviar', telefone=telefone) }}" class="mt-3 vidro rounded-lg p-3 shrink-0">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="flex items-end gap-2">
       <textarea name="texto" rows="2" required

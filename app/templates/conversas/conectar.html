@@ -1,10 +1,10 @@
 {% extends "base_painel.html" %}
-{% block title %}WhatsApp — Agenda SaaS{% endblock %}
+{% block title %}Conversas — Agenda SaaS{% endblock %}
 {% block painel_content %}
 <div class="max-w-md mx-auto pb-12">
   <div class="mb-6">
-    <h1 class="text-3xl font-light text-off">WhatsApp</h1>
-    <p class="text-txt-3 text-sm mt-1">Conecte o número que o agente vai usar pra atender</p>
+    <h1 class="text-3xl font-light text-off">Conversas</h1>
+    <p class="text-txt-3 text-sm mt-1">Conecte o WhatsApp pra ver e responder os atendimentos do agente</p>
   </div>
 
   <div class="vidro rounded-lg p-6 text-center">
@@ -14,15 +14,6 @@
       <img id="qrcode-img" class="mx-auto rounded-md" width="260" height="260" alt="QR code do WhatsApp">
       <p class="text-txt-3 text-[12.5px] mt-4">Abra o WhatsApp no celular → Aparelhos conectados → Conectar um aparelho, e escaneie este código.</p>
     </div>
-
-    <div id="conectado-wrap" class="hidden">
-      <div class="w-14 h-14 rounded-full mx-auto flex items-center justify-center"
-           style="background: rgba(62,167,107,.16); border: 1px solid rgba(62,167,107,.34);">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7fcb9f" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-      </div>
-      <p class="text-off text-[14px] mt-4">WhatsApp conectado</p>
-      <p class="text-txt-3 text-[12.5px] mt-1">O agente já pode receber e responder mensagens.</p>
-    </div>
   </div>
 </div>
 
@@ -30,18 +21,11 @@
   const badge = document.getElementById("status-badge");
   const qrWrap = document.getElementById("qrcode-wrap");
   const qrImg = document.getElementById("qrcode-img");
-  const okWrap = document.getElementById("conectado-wrap");
 
-  let conectado = false;
   let ultimoPedidoQrcode = 0;
   const INTERVALO_RENOVAR_QRCODE_MS = 30000;
 
-  // IMPORTANTE: /whatsapp/qrcode chama o endpoint "connect" da Evolution API,
-  // que reinicia a sessão do WhatsApp. Chamar isso a cada poll de status
-  // interrompe o pareamento no meio (o QR "escaneado com sucesso" reaparecia
-  // porque a gente ficava pedindo um QR novo antes da sessão terminar de
-  // abrir). Por isso: status é leve e pode ser checado sempre; qrcode só é
-  // pedido uma vez no início e depois só se renovado ficar sem resposta.
+  // Ver app/templates/whatsapp (removido) sobre por que qrcode não é pedido a cada poll.
   async function buscarQrcodeSeNecessario() {
     const agora = Date.now();
     if (agora - ultimoPedidoQrcode < INTERVALO_RENOVAR_QRCODE_MS) return;
@@ -55,21 +39,15 @@
   }
 
   async function verificarStatus() {
-    if (conectado) return;
-
     try {
       const resp = await fetch("{{ url_for('whatsapp.status') }}");
       const data = await resp.json();
 
       if (data.state === "open") {
-        conectado = true;
-        badge.textContent = "conectado";
-        qrWrap.classList.add("hidden");
-        okWrap.classList.remove("hidden");
+        window.location.reload();
         return;
       }
 
-      okWrap.classList.add("hidden");
       qrWrap.classList.remove("hidden");
       badge.textContent = data.state === "nao_configurado" ? "não configurado" : "aguardando leitura do QR code";
 

@@ -6,6 +6,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_jwt_extended import get_current_user, jwt_required
 
 from app.extensions import db
+from app.utils.dates import mes_completo_pt
 from app.models import (
     Agendamento,
     Caixa,
@@ -481,7 +482,7 @@ def demonstrativos():
 
     dre = demonstrativo(user.tenant_id, ref, fim_mes)
     return render_template(
-        "financeiro/demonstrativos.html", dre=dre, mes_ref=ref, rotulo_periodo=ref.strftime("%B/%Y")
+        "financeiro/demonstrativos.html", dre=dre, mes_ref=ref, rotulo_periodo=mes_completo_pt(ref)
     )
 
 
