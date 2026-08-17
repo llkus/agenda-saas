@@ -162,6 +162,20 @@ ele (usuários, agendamentos, financeiro, mensagens etc.):
 flask delete-tenant --tenant-id 1
 ```
 
+Pra trazer pro painel o histórico de conversas que já existia na Evolution
+API antes do agente entrar (ex: reconectou um número que já era usado
+manualmente pelo estabelecimento):
+
+```bash
+flask importar-historico-whatsapp --tenant-id 1
+```
+
+Só importa texto (ignora mídia) e só dos telefones que **já são clientes
+cadastrados** no tenant — não puxa grupos nem números desconhecidos, pra não
+misturar conversas alheias ao negócio com as do painel. Idempotente (pode
+rodar de novo sem duplicar).
+```
+
 ### Ligando o agente de IA (n8n + Evolution API + Gemini)
 
 Isso roda fora do repositório do Flask, como serviços Docker separados:
@@ -188,10 +202,10 @@ enxergam via `host.docker.internal` quando o Flask roda direto no host
 python -m pytest tests/ -v
 ```
 
-33 testes cobrindo autenticação, CRUD de cada recurso, isolamento
+39 testes cobrindo autenticação, CRUD de cada recurso, isolamento
 multi-tenant (garantindo que um tenant nunca acessa dado de outro), cálculo
 de horários disponíveis, corrida de agendamento simultâneo, exclusão de
-tenant em cascata, a API do n8n e
+tenant em cascata, importação de histórico do WhatsApp, a API do n8n e
 CSRF. Rodam contra SQLite em memória — não tocam o Postgres real.
 
 ## Segurança

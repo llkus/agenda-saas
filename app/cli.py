@@ -5,6 +5,7 @@ from app.extensions import db
 from app.models import Recorrencia, Tenant, User
 from app.utils.security import hash_senha
 from app.utils.tenant import excluir_tenant
+from app.utils.whatsapp_import import LIMITE_PADRAO_POR_CLIENTE, importar_historico_tenant
 
 
 def register_commands(app: Flask):
@@ -57,6 +58,31 @@ def register_commands(app: Flask):
         nome = tenant.nome_estabelecimento
         excluir_tenant(tenant_id)
         click.echo(f"Tenant '{nome}' (id={tenant_id}) e todos os dados vinculados foram apagados.")
+
+    @app.cli.command("importar-historico-whatsapp")
+    @click.option("--tenant-id", required=True, type=int)
+    @click.option(
+        "--limite", default=LIMITE_PADRAO_POR_CLIENTE, type=int,
+        help="Máximo de mensagens de texto a importar por cliente.",
+    )
+    def importar_historico_whatsapp(tenant_id, limite):
+        """Importa o histórico de conversas (só texto) da Evolution API pra
+        os clientes já cadastrados neste tenant. Não importa grupos nem
+        números que ainda não são clientes — evita puxar conversas pessoais
+        do número conectado."""
+        tenant = db.session.get(Tenant, tenant_id)
+        if not tenant:
+            click.echo(f"Nenhum tenant com id={tenant_id}.")
+            return
+
+        resultado = importar_historico_tenant(tenant_id, limite)
+        if not resultado:
+            click.echo("Esse tenant não tem nenhum cliente cadastrado ainda.")
+            return
+
+        for telefone, quantidade in resultado.items():
+            click.echo(f"{telefone}: {quantidade} mensagem(ns) importada(s)")
+        click.echo(f"Total: {sum(resultado.values())} mensagem(ns).")
 
     @app.cli.command("gerar-recorrencias")
     def gerar_recorrencias():

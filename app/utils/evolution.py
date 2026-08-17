@@ -45,6 +45,24 @@ def enviar_mensagem(telefone: str, texto: str) -> bool:
         return False
 
 
+def buscar_mensagens(remote_jid: str, pagina: int) -> dict:
+    """Busca uma página do histórico de mensagens de uma conversa (já
+    armazenado no banco da própria Evolution API, vindo do celular
+    conectado). 50 mensagens por página."""
+    base_url, api_key, instance = _config()
+    if not (base_url and api_key and instance):
+        return {"total": 0, "pages": 0, "records": []}
+
+    resp = requests.post(
+        f"{base_url}/chat/findMessages/{instance}",
+        headers={"apikey": api_key},
+        json={"where": {"key": {"remoteJid": remote_jid}}, "page": pagina},
+        timeout=15,
+    )
+    resp.raise_for_status()
+    return resp.json().get("messages", {"total": 0, "pages": 0, "records": []})
+
+
 def obter_qrcode():
     base_url, api_key, instance = _config()
     if not (base_url and api_key and instance):
