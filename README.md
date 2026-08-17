@@ -155,6 +155,13 @@ flask create-user --tenant-id 1 --nome "Seu Nome" --email voce@exemplo.com --sen
 flask run
 ```
 
+Pra apagar um tenant (ex: churn de cliente) e todos os dados vinculados a
+ele (usuários, agendamentos, financeiro, mensagens etc.):
+
+```bash
+flask delete-tenant --tenant-id 1
+```
+
 ### Ligando o agente de IA (n8n + Evolution API + Gemini)
 
 Isso roda fora do repositório do Flask, como serviços Docker separados:
@@ -181,9 +188,10 @@ enxergam via `host.docker.internal` quando o Flask roda direto no host
 python -m pytest tests/ -v
 ```
 
-29 testes cobrindo autenticação, CRUD de cada recurso, isolamento
+33 testes cobrindo autenticação, CRUD de cada recurso, isolamento
 multi-tenant (garantindo que um tenant nunca acessa dado de outro), cálculo
-de horários disponíveis, corrida de agendamento simultâneo, a API do n8n e
+de horários disponíveis, corrida de agendamento simultâneo, exclusão de
+tenant em cascata, a API do n8n e
 CSRF. Rodam contra SQLite em memória — não tocam o Postgres real.
 
 ## Segurança
