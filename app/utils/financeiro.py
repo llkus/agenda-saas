@@ -1,6 +1,6 @@
 from calendar import monthrange
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import func
@@ -8,11 +8,8 @@ from sqlalchemy import func
 from app.extensions import db
 from app.utils.dates import mes_abreviado_pt
 from app.models import (
-    Caixa,
-    CaixaMovimento,
     ContaFinanceira,
     ContaPagar,
-    FormaPagamento,
     GrupoDRE,
     LancamentoFinanceiro,
     PlanoDeContas,
@@ -237,34 +234,3 @@ def projecao_contas_pagar(tenant_id: int, n_meses: int = 6) -> list[dict]:
         )
         resultado.append({"mes": inicio_mes, "rotulo": mes_abreviado_pt(inicio_mes), "total": total + estimado, "estimado": estimado})
     return resultado
-
-
-def resumo_caixa_dia(tenant_id: int, dia: date) -> dict:
-    caixa = Caixa.query.filter_by(tenant_id=tenant_id, data=dia).first()
-
-    lancamentos_dia = LancamentoFinanceiro.query.filter(
-        LancamentoFinanceiro.tenant_id == tenant_id,
-        LancamentoFinanceiro.tipo == TipoLancamento.ENTRADA,
-        LancamentoFinanceiro.data == dia,
-        LancamentoFinanceiro.forma == FormaPagamento.DINHEIRO,
-    ).all()
-    em_especie = sum((l.valor for l in lancamentos_dia), Decimal("0"))
-
-    sangrias = Decimal("0")
-    suprimentos = Decimal("0")
-    if caixa:
-        for m in caixa.movimentos:
-            if m.tipo == "sangria":
-                sangrias += m.valor
-            else:
-                suprimentos += m.valor
-
-    esperado = (caixa.saldo_abertura if caixa else Decimal("0")) + em_especie + suprimentos - sangrias
-
-    return {
-        "caixa": caixa,
-        "em_especie": em_especie,
-        "sangrias": sangrias,
-        "suprimentos": suprimentos,
-        "esperado": esperado,
-    }

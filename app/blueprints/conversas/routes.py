@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_jwt_extended import get_current_user, jwt_required
 from sqlalchemy import func
 

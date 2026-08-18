@@ -3,8 +3,6 @@ from datetime import date, datetime, time, timedelta
 from app.extensions import db
 from app.models import (
     Agendamento,
-    Caixa,
-    CaixaMovimento,
     Cliente,
     ContaFinanceira,
     ContaPagar,
@@ -73,11 +71,6 @@ def _popular_tenant_completo(app, tenant_id: int, sufixo: str):
         valor=100, vencimento=date.today(),
     ))
 
-    caixa = Caixa(tenant_id=tenant_id, data=date.today(), saldo_abertura=0)
-    db.session.add(caixa)
-    db.session.flush()
-    db.session.add(CaixaMovimento(caixa_id=caixa.id, tipo="suprimento", valor=10, motivo="teste"))
-
     db.session.commit()
 
 
@@ -93,14 +86,12 @@ def test_excluir_tenant_apaga_tudo_e_preserva_outros_tenants(app, tenant, outro_
 
     tabelas_tenant_direto = [User, Cliente, Disponibilidade, Agendamento, Mensagem,
                               ConversaEstado, Recorrencia, ContaFinanceira, PlanoDeContas,
-                              LancamentoFinanceiro, ContaPagar, Caixa]
+                              LancamentoFinanceiro, ContaPagar]
     from app.models import Servico
     tabelas_tenant_direto.append(Servico)
 
     for modelo in tabelas_tenant_direto:
         assert modelo.query.filter_by(tenant_id=tenant_id).count() == 0, modelo.__name__
-
-    assert CaixaMovimento.query.count() == 1  # só sobrou o do outro_tenant
 
     # o outro tenant não foi tocado
     assert db.session.get(Tenant, outro_tenant_id) is not None

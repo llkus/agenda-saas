@@ -106,38 +106,3 @@ class ContaPagar(db.Model):
 
     def __repr__(self):
         return f"<ContaPagar {self.descricao} {self.valor}>"
-
-
-class Caixa(db.Model):
-    __tablename__ = "caixas"
-
-    id = db.Column(db.Integer, primary_key=True)
-    tenant_id = db.Column(db.Integer, db.ForeignKey("tenants.id"), nullable=False)
-    data = db.Column(db.Date, nullable=False)
-    saldo_abertura = db.Column(db.Numeric(10, 2), nullable=False, default=0)
-    saldo_fechamento = db.Column(db.Numeric(10, 2), nullable=True)
-    aberto_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    fechado_em = db.Column(db.DateTime, nullable=True)
-
-    tenant = db.relationship("Tenant", backref="caixas")
-
-    __table_args__ = (db.UniqueConstraint("tenant_id", "data", name="uq_caixa_tenant_data"),)
-
-    def __repr__(self):
-        return f"<Caixa {self.data} tenant={self.tenant_id}>"
-
-
-class CaixaMovimento(db.Model):
-    __tablename__ = "caixa_movimentos"
-
-    id = db.Column(db.Integer, primary_key=True)
-    caixa_id = db.Column(db.Integer, db.ForeignKey("caixas.id"), nullable=False)
-    tipo = db.Column(db.String(12), nullable=False)  # sangria | suprimento
-    valor = db.Column(db.Numeric(10, 2), nullable=False)
-    motivo = db.Column(db.String(160), nullable=False)
-    criado_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
-    caixa = db.relationship("Caixa", backref="movimentos")
-
-    def __repr__(self):
-        return f"<CaixaMovimento {self.tipo} {self.valor}>"

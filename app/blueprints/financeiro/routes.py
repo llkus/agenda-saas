@@ -9,8 +9,6 @@ from app.extensions import db
 from app.utils.dates import mes_completo_pt
 from app.models import (
     Agendamento,
-    Caixa,
-    CaixaMovimento,
     ContaFinanceira,
     ContaPagar,
     FormaPagamento,
@@ -26,7 +24,6 @@ from app.utils.financeiro import (
     demonstrativo,
     mes_a_mes,
     projecao_contas_pagar,
-    resumo_caixa_dia,
     resumo_periodo,
     saldos_contas,
     seed_plano_de_contas,
@@ -94,7 +91,6 @@ def caixa():
     formas = list(FormaPagamento)
 
     resumo_hoje = resumo_periodo(user.tenant_id, hoje, hoje)
-    caixa_hoje = resumo_caixa_dia(user.tenant_id, hoje)
 
     contas_pagar_abertas = (
         ContaPagar.query.filter_by(tenant_id=user.tenant_id, pago=False)
@@ -123,7 +119,6 @@ def caixa():
         contas_financeiras=contas_financeiras,
         formas=formas,
         resumo_hoje=resumo_hoje,
-        caixa_hoje=caixa_hoje,
         contas_pagar_abertas=contas_pagar_abertas,
         projecao=projecao,
         categorias=categorias,
@@ -172,64 +167,6 @@ def registrar_pagamento(agendamento_id):
     db.session.commit()
     flash("Pagamento registrado.", "success")
     return redirect(url_for("financeiro.caixa"))
-
-
-@financeiro_bp.route("/caixa/abrir", methods=["POST"])
-@jwt_required()
-def abrir_caixa():
-    user = get_current_user()
-    hoje = date.today()
-    if Caixa.query.filter_by(tenant_id=user.tenant_id, data=hoje).first():
-        flash("O caixa de hoje já foi aberto.", "error")
-        return redirect(url_for("financeiro.caixa", aba="dia"))
-
-    saldo = _parse_decimal(request.form.get("saldo_abertura", "0")) or Decimal("0")
-    db.session.add(Caixa(tenant_id=user.tenant_id, data=hoje, saldo_abertura=saldo))
-    db.session.commit()
-    flash("Caixa aberto.", "success")
-    return redirect(url_for("financeiro.caixa", aba="dia"))
-
-
-@financeiro_bp.route("/caixa/movimento", methods=["POST"])
-@jwt_required()
-def movimento_caixa():
-    user = get_current_user()
-    hoje = date.today()
-    caixa_hoje = Caixa.query.filter_by(tenant_id=user.tenant_id, data=hoje, fechado_em=None).first()
-    if not caixa_hoje:
-        flash("Abra o caixa antes de registrar movimentos.", "error")
-        return redirect(url_for("financeiro.caixa", aba="dia"))
-
-    tipo = request.form.get("tipo")
-    valor = _parse_decimal(request.form.get("valor", ""))
-    motivo = (request.form.get("motivo") or "").strip()
-
-    if tipo not in ("sangria", "suprimento") or not valor or valor <= 0 or not motivo:
-        flash("Preencha valor e motivo corretamente.", "error")
-        return redirect(url_for("financeiro.caixa", aba="dia"))
-
-    db.session.add(CaixaMovimento(caixa_id=caixa_hoje.id, tipo=tipo, valor=valor, motivo=motivo))
-    db.session.commit()
-    flash("Movimento registrado.", "success")
-    return redirect(url_for("financeiro.caixa", aba="dia"))
-
-
-@financeiro_bp.route("/caixa/fechar", methods=["POST"])
-@jwt_required()
-def fechar_caixa():
-    user = get_current_user()
-    hoje = date.today()
-    caixa_hoje = Caixa.query.filter_by(tenant_id=user.tenant_id, data=hoje, fechado_em=None).first()
-    if not caixa_hoje:
-        flash("Nenhum caixa aberto hoje.", "error")
-        return redirect(url_for("financeiro.caixa", aba="dia"))
-
-    contado = _parse_decimal(request.form.get("contado", "0")) or Decimal("0")
-    caixa_hoje.saldo_fechamento = contado
-    caixa_hoje.fechado_em = datetime.utcnow()
-    db.session.commit()
-    flash("Caixa fechado.", "success")
-    return redirect(url_for("financeiro.caixa", aba="dia"))
 
 
 # ------------------------------------------------------------------ #

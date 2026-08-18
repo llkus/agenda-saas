@@ -26,7 +26,7 @@
   </div>
 
   <div class="flex flex-wrap gap-2 mb-5">
-    {% for chave, rotulo in [("receber", "A receber"), ("dia", "Fechamento do dia"), ("contas", "Contas a pagar"), ("extrato", "Extrato")] %}
+    {% for chave, rotulo in [("receber", "A receber"), ("contas", "Contas a pagar"), ("extrato", "Extrato")] %}
     <a href="{{ url_for('financeiro.caixa', aba=chave) }}"
        class="rounded-sm border px-2.5 py-1 text-[12.5px] transition-colors {{ 'border-transparent bg-off font-medium text-canvas' if aba == chave else 'border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top' }}">
       {{ rotulo }}
@@ -67,96 +67,6 @@
     {% endif %}
   </div>
   <p class="text-txt-3 text-xs mt-2">Agendamentos marcados como "realizado" no Kanban aparecem aqui até o pagamento ser registrado.</p>
-
-  {% elif aba == "dia" %}
-  <div class="grid gap-4 md:grid-cols-2">
-    <div class="vidro rounded-lg p-4">
-      <div class="eyebrow mb-3">gaveta de hoje</div>
-      {% if not caixa_hoje.caixa %}
-      <p class="text-txt-2 text-sm mb-3">O caixa de hoje ainda não foi aberto.</p>
-      <form method="post" action="{{ url_for('financeiro.abrir_caixa') }}" class="flex gap-2">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="number" step="0.01" name="saldo_abertura" value="0" class="bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500 w-32">
-        <button type="submit" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">Abrir caixa</button>
-      </form>
-      {% elif caixa_hoje.caixa.fechado_em %}
-      <div class="flex justify-between text-sm py-1"><span class="text-txt-2">Abertura</span><span class="tabular text-off">R$ {{ "%.2f"|format(caixa_hoje.caixa.saldo_abertura) }}</span></div>
-      <div class="flex justify-between text-sm py-1 border-t border-hair mt-1 pt-2"><span class="text-txt-2 font-medium">Fechamento</span><span class="tabular text-off font-medium">R$ {{ "%.2f"|format(caixa_hoje.caixa.saldo_fechamento) }}</span></div>
-      <p class="text-txt-3 text-xs mt-2">Caixa fechado às {{ caixa_hoje.caixa.fechado_em.strftime("%H:%M") }}.</p>
-      {% else %}
-      <div class="flex justify-between text-sm py-1"><span class="text-txt-2">Abertura</span><span class="tabular text-off">R$ {{ "%.2f"|format(caixa_hoje.caixa.saldo_abertura) }}</span></div>
-      <div class="flex justify-between text-sm py-1"><span class="text-txt-2">Vendas em dinheiro</span><span class="tabular text-leaf-300">R$ {{ "%.2f"|format(caixa_hoje.em_especie) }}</span></div>
-      {% if caixa_hoje.suprimentos %}<div class="flex justify-between text-sm py-1"><span class="text-txt-2">Suprimentos</span><span class="tabular text-leaf-300">R$ {{ "%.2f"|format(caixa_hoje.suprimentos) }}</span></div>{% endif %}
-      <div class="flex justify-between text-sm py-1"><span class="text-txt-2">Sangrias</span><span class="tabular text-terra">− R$ {{ "%.2f"|format(caixa_hoje.sangrias) }}</span></div>
-      <div class="flex justify-between text-sm py-1 border-t border-hair mt-1 pt-2"><span class="text-txt-2 font-medium">Deve ter na gaveta</span><span class="tabular text-off font-medium">R$ {{ "%.2f"|format(caixa_hoje.esperado) }}</span></div>
-
-      <div class="flex flex-wrap gap-2 mt-4">
-        <button onclick="document.getElementById('modal-sangria').classList.remove('hidden')" class="rounded-sm border border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top px-2.5 py-1 text-[12.5px] transition-colors">Sangria</button>
-        <button onclick="document.getElementById('modal-suprimento').classList.remove('hidden')" class="rounded-sm border border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top px-2.5 py-1 text-[12.5px] transition-colors">Suprimento</button>
-        <button onclick="document.getElementById('modal-fechar').classList.remove('hidden')" class="bg-amber-500 text-[#2b1b04] text-[12.5px] font-medium px-3 py-1.5 rounded-chip hover:shadow-amber transition-shadow">Fechar caixa</button>
-      </div>
-      {% endif %}
-    </div>
-
-    <div class="vidro rounded-lg p-4">
-      <div class="eyebrow mb-3">movimentos</div>
-      {% if caixa_hoje.caixa and caixa_hoje.caixa.movimentos %}
-      {% for m in caixa_hoje.caixa.movimentos %}
-      <div class="flex justify-between text-[12.5px] py-1">
-        <span class="text-txt-2">{{ m.motivo }}</span>
-        <span class="tabular {{ 'text-terra' if m.tipo == 'sangria' else 'text-leaf-300' }}">{{ "−" if m.tipo == "sangria" else "+" }} R$ {{ "%.2f"|format(m.valor) }}</span>
-      </div>
-      {% endfor %}
-      {% else %}
-      <p class="text-txt-3 text-sm">Nenhum movimento hoje.</p>
-      {% endif %}
-    </div>
-  </div>
-
-  <div id="modal-sangria" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-    <div class="vidro-solido rounded-lg p-5 max-w-sm w-full">
-      <h3 class="text-off font-medium mb-3">Sangria (tirar da gaveta)</h3>
-      <form method="post" action="{{ url_for('financeiro.movimento_caixa') }}" class="space-y-3">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="tipo" value="sangria">
-        <input type="number" step="0.01" name="valor" placeholder="Valor" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
-        <input type="text" name="motivo" placeholder="Motivo (ex.: depósito no banco)" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
-        <div class="flex gap-2 justify-end">
-          <button type="button" onclick="document.getElementById('modal-sangria').classList.add('hidden')" class="text-txt-3 hover:text-off px-3 py-2">Cancelar</button>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2">Registrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div id="modal-suprimento" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-    <div class="vidro-solido rounded-lg p-5 max-w-sm w-full">
-      <h3 class="text-off font-medium mb-3">Suprimento (colocar na gaveta)</h3>
-      <form method="post" action="{{ url_for('financeiro.movimento_caixa') }}" class="space-y-3">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="tipo" value="suprimento">
-        <input type="number" step="0.01" name="valor" placeholder="Valor" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
-        <input type="text" name="motivo" placeholder="Motivo (ex.: troco)" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
-        <div class="flex gap-2 justify-end">
-          <button type="button" onclick="document.getElementById('modal-suprimento').classList.add('hidden')" class="text-txt-3 hover:text-off px-3 py-2">Cancelar</button>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2">Registrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div id="modal-fechar" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-    <div class="vidro-solido rounded-lg p-5 max-w-sm w-full">
-      <h3 class="text-off font-medium mb-3">Fechar o caixa</h3>
-      <p class="text-txt-2 text-[13px] mb-3">Deve ter na gaveta: <span class="tabular text-off">R$ {{ "%.2f"|format(caixa_hoje.esperado) }}</span></p>
-      <form method="post" action="{{ url_for('financeiro.fechar_caixa') }}" class="space-y-3">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="number" step="0.01" name="contado" value="{{ caixa_hoje.esperado }}" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
-        <div class="flex gap-2 justify-end">
-          <button type="button" onclick="document.getElementById('modal-fechar').classList.add('hidden')" class="text-txt-3 hover:text-off px-3 py-2">Cancelar</button>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2">Confirmar fechamento</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   {% elif aba == "contas" %}
   <div class="vidro rounded-lg p-4 mb-5 overflow-x-auto">
