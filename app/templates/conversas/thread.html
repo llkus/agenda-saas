@@ -83,7 +83,8 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="flex items-end gap-2">
       <textarea name="texto" rows="2" required
-                placeholder="Escreva para o cliente. Isso pausa o automático e envia pelo WhatsApp de verdade."
+                placeholder="Escreva para o cliente. Isso pausa o automático e envia pelo WhatsApp de verdade. Enter envia, Shift+Enter quebra linha."
+                onkeydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); this.form.requestSubmit(); }"
                 class="flex-1 min-h-[52px] resize-none rounded-sm border border-hair-top bg-surf-1 px-2.5 py-2 text-[13.5px] leading-snug outline-none focus:border-amber-500 transition-colors text-off"></textarea>
       <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2.5 hover:shadow-amber transition-shadow shrink-0">Enviar</button>
     </div>
