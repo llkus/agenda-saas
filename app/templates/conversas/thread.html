@@ -45,16 +45,16 @@
 
   <div class="vidro rounded-lg p-5 space-y-3 max-h-[48vh] md:max-h-none md:flex-1 md:min-h-0 overflow-y-auto">
     {% for m in mensagens %}
-    {% set dia_atual = m.criado_em.strftime("%Y-%m-%d") %}
-    {% if loop.first or dia_atual != mensagens[loop.index0 - 1].criado_em.strftime("%Y-%m-%d") %}
-    <p class="text-center text-[11px] tracking-wide text-txt-3 uppercase py-1">{{ m.criado_em.strftime("%d/%m/%Y") }}</p>
+    {% set dia_atual = (m.criado_em|local).strftime("%Y-%m-%d") %}
+    {% if loop.first or dia_atual != (mensagens[loop.index0 - 1].criado_em|local).strftime("%Y-%m-%d") %}
+    <p class="text-center text-[11px] tracking-wide text-txt-3 uppercase py-1">{{ (m.criado_em|local).strftime("%d/%m/%Y") }}</p>
     {% endif %}
 
     {% if m.remetente.value == "cliente" %}
     <div class="flex justify-start">
       <div class="max-w-[80%] bg-surf-2 border border-hair rounded-[16px_16px_16px_5px] px-3.5 py-2.5 text-[13.5px] text-off">
         {{ m.texto }}
-        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ (m.criado_em|local).strftime("%H:%M") }}</div>
       </div>
     </div>
     {% elif m.remetente.value == "robo" %}
@@ -62,7 +62,7 @@
       <div class="max-w-[80%] bg-surf-2 rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off">
         <div class="eyebrow mb-1" style="font-size:9.5px;">robô</div>
         {{ m.texto }}
-        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ (m.criado_em|local).strftime("%H:%M") }}</div>
       </div>
     </div>
     {% else %}
@@ -71,7 +71,7 @@
            style="background: linear-gradient(145deg, rgba(232,163,61,.13), rgba(62,167,107,.07)); border: 1px solid rgba(232,163,61,.24);">
         <div class="eyebrow mb-1" style="font-size:9.5px; color: #f6c77c;">equipe</div>
         {{ m.texto }}
-        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ m.criado_em.strftime("%H:%M") }}</div>
+        <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ (m.criado_em|local).strftime("%H:%M") }}</div>
       </div>
     </div>
     {% endif %}

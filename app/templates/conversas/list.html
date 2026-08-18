@@ -27,7 +27,7 @@
                         else 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' }}">
           {{ "com a equipe" if modo.value == "humano" else "encerrada" if modo.value == "encerrada" else "automático" }}
         </span>
-        <span class="tabular text-[12px] text-txt-3 shrink-0">{{ m.criado_em.strftime("%d/%m %H:%M") }}</span>
+        <span class="tabular text-[12px] text-txt-3 shrink-0">{{ (m.criado_em|local).strftime("%d/%m %H:%M") }}</span>
       </a>
       {% endfor %}
     </div>

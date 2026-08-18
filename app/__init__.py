@@ -62,6 +62,10 @@ def create_app(config_class=Config):
 
     register_commands(app)
 
+    from app.utils.dates import horario_local
+
+    app.jinja_env.filters["local"] = horario_local
+
     @app.context_processor
     def inject_sidebar_user():
         try:

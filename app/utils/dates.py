@@ -1,4 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+TZ_LOCAL = ZoneInfo("America/Fortaleza")
 
 MESES_ABREV = [
     "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
@@ -23,3 +26,14 @@ def mes_abreviado_pt(data) -> str:
 
 def mes_completo_pt(data) -> str:
     return f"{MESES_COMPLETOS[data.month - 1]}/{data.year}"
+
+
+def horario_local(dt):
+    """Converte um datetime salvo em UTC (padrão do banco) pro horário de
+    Brasília/Fortaleza (UTC-3), pra exibir no painel. Datas antigas salvas
+    sem tzinfo são tratadas como UTC (era o único jeito de gravar antes)."""
+    if dt is None:
+        return dt
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(TZ_LOCAL)
