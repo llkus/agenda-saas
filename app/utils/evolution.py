@@ -45,10 +45,17 @@ def enviar_mensagem(telefone: str, texto: str) -> bool:
         return False
 
 
-def buscar_mensagens(remote_jid: str, pagina: int) -> dict:
+def buscar_mensagens(remote_jid: str, pagina: int, campo: str = "remoteJid") -> dict:
     """Busca uma página do histórico de mensagens de uma conversa (já
     armazenado no banco da própria Evolution API, vindo do celular
-    conectado). 50 mensagens por página."""
+    conectado). 50 mensagens por página.
+
+    `campo` deixa escolher em qual chave do JSON `key` bater o telefone:
+    contatos que o WhatsApp já migrou pro endereçamento por LID (privacidade)
+    guardam o telefone real em `remoteJidAlt`, não em `remoteJid` (que vira
+    um ID opaco tipo "123...@lid"). Contatos antigos ainda usam `remoteJid`
+    direto. Não dá pra combinar os dois numa query só (o endpoint não
+    processa OR entre campos do JSON), por isso duas chamadas separadas."""
     base_url, api_key, instance = _config()
     if not (base_url and api_key and instance):
         return {"total": 0, "pages": 0, "records": []}
@@ -56,7 +63,7 @@ def buscar_mensagens(remote_jid: str, pagina: int) -> dict:
     resp = requests.post(
         f"{base_url}/chat/findMessages/{instance}",
         headers={"apikey": api_key},
-        json={"where": {"key": {"remoteJid": remote_jid}}, "page": pagina},
+        json={"where": {"key": {campo: remote_jid}}, "page": pagina},
         timeout=15,
     )
     resp.raise_for_status()

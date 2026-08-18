@@ -30,45 +30,66 @@ def _ja_importada(tenant_id: int, telefone: str, texto: str, criado_em: datetime
     )
 
 
+def _buscar_paginas(remote_jid: str, campo: str, limite: int) -> list[dict]:
+    registros = []
+    pagina = 1
+    total_paginas = 1
+
+    while pagina <= total_paginas and len(registros) < limite:
+        resultado = buscar_mensagens(remote_jid, pagina, campo=campo)
+        total_paginas = resultado.get("pages", 1) or 1
+        registros.extend(resultado.get("records", []))
+        pagina += 1
+
+    return registros
+
+
 def importar_historico_cliente(tenant_id: int, cliente: Cliente, limite: int) -> int:
     """Importa o histórico de mensagens de texto de um cliente (via
     telefone) pra dentro da nossa tabela `mensagens`. Ignora mídia (áudio,
     imagem, figurinha) porque `Mensagem.texto` só guarda texto. Idempotente:
-    pode rodar de novo sem duplicar (checa tenant+telefone+texto+timestamp)."""
+    pode rodar de novo sem duplicar (checa tenant+telefone+texto+timestamp).
+
+    Busca por `remoteJid` (contatos antigos, telefone direto) e por
+    `remoteJidAlt` (contatos migrados pro endereçamento por LID do
+    WhatsApp, onde `remoteJid` vira um ID opaco) e junta os dois,
+    deduplicando pelo id interno da mensagem na Evolution."""
     remote_jid = _remote_jid(cliente.telefone)
+    brutos = _buscar_paginas(remote_jid, "remoteJid", limite) + _buscar_paginas(remote_jid, "remoteJidAlt", limite)
+
+    vistos = set()
+    registros = []
+    for msg in brutos:
+        if msg["id"] in vistos:
+            continue
+        vistos.add(msg["id"])
+        registros.append(msg)
+
     importadas = 0
-    pagina = 1
-    total_paginas = 1
+    for msg in registros:
+        if importadas >= limite:
+            break
 
-    while pagina <= total_paginas and importadas < limite:
-        resultado = buscar_mensagens(remote_jid, pagina)
-        total_paginas = resultado.get("pages", 1) or 1
+        texto = _extrair_texto(msg)
+        if not texto:
+            continue
 
-        for msg in resultado.get("records", []):
-            texto = _extrair_texto(msg)
-            if not texto:
-                continue
+        criado_em = datetime.fromtimestamp(msg["messageTimestamp"], tz=timezone.utc)
+        if _ja_importada(tenant_id, cliente.telefone, texto, criado_em):
+            continue
 
-            criado_em = datetime.fromtimestamp(msg["messageTimestamp"], tz=timezone.utc)
-            if _ja_importada(tenant_id, cliente.telefone, texto, criado_em):
-                continue
-
-            remetente = RemetenteMensagem.EQUIPE if msg["key"]["fromMe"] else RemetenteMensagem.CLIENTE
-            db.session.add(
-                Mensagem(
-                    tenant_id=tenant_id,
-                    cliente_id=cliente.id,
-                    telefone=cliente.telefone,
-                    remetente=remetente,
-                    texto=texto,
-                    criado_em=criado_em,
-                )
+        remetente = RemetenteMensagem.EQUIPE if msg["key"]["fromMe"] else RemetenteMensagem.CLIENTE
+        db.session.add(
+            Mensagem(
+                tenant_id=tenant_id,
+                cliente_id=cliente.id,
+                telefone=cliente.telefone,
+                remetente=remetente,
+                texto=texto,
+                criado_em=criado_em,
             )
-            importadas += 1
-            if importadas >= limite:
-                break
-
-        pagina += 1
+        )
+        importadas += 1
 
     db.session.commit()
     return importadas
