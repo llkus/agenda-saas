@@ -3,32 +3,49 @@
 {% block painel_content %}
 <div class="max-w-5xl mx-auto pb-12">
   <div class="mb-6">
-    <h1 class="text-3xl font-light text-off">Caixa</h1>
+    <h1 class="text-3xl font-light text-ink">Caixa</h1>
     <p class="text-txt-3 text-sm mt-1">O dinheiro entrando e saindo do negócio</p>
+  </div>
+
+  {% set _abas_financeiro = [
+    (["financeiro.caixa"], url_for("financeiro.caixa"), "Caixa"),
+    (["financeiro.plano_de_contas"], url_for("financeiro.plano_de_contas"), "Plano de contas"),
+    (["financeiro.demonstrativos"], url_for("financeiro.demonstrativos"), "Demonstrativos"),
+    (["financeiro.mes_a_mes_view"], url_for("financeiro.mes_a_mes_view"), "Mês a mês"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_financeiro %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     {% for s in saldos %}
-    <div class="vidro rounded-lg p-4">
+    <div class="kpi-card vidro rounded-lg p-4">
       <div class="eyebrow">{{ s.conta.nome }}</div>
-      <div class="numero text-[24px] mt-1 {{ 'text-off' if s.saldo >= 0 else 'text-terra' }}">R$ {{ "%.2f"|format(s.saldo) }}</div>
+      <div class="numero text-[24px] mt-1 {{ 'text-ink' if s.saldo >= 0 else 'text-terra-500' }}">R$ {{ "%.2f"|format(s.saldo) }}</div>
     </div>
     {% endfor %}
-    <div class="vidro rounded-lg p-4">
+    <div class="kpi-card vidro rounded-lg p-4">
       <div class="eyebrow">Entrou hoje</div>
-      <div class="numero text-[24px] mt-1 text-leaf-300">R$ {{ "%.2f"|format(resumo_hoje.receita) }}</div>
+      <div class="numero text-[24px] mt-1 text-leaf-700">R$ {{ "%.2f"|format(resumo_hoje.receita) }}</div>
       <div class="text-txt-3 text-xs mt-1">{{ resumo_hoje.atendimentos }} pagamento(s)</div>
     </div>
-    <div class="vidro rounded-lg p-4">
+    <div class="kpi-card vidro rounded-lg p-4">
       <div class="eyebrow">Ticket médio hoje</div>
-      <div class="numero text-[24px] mt-1 text-off">R$ {{ "%.2f"|format(resumo_hoje.ticket_medio) }}</div>
+      <div class="numero text-[24px] mt-1 text-ink">R$ {{ "%.2f"|format(resumo_hoje.ticket_medio) }}</div>
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-2 mb-5">
+  {# nível abaixo das abas de seção: texto puro com sublinhado, sem pill #}
+  <div class="flex flex-wrap gap-5 mb-5 border-b border-hair">
     {% for chave, rotulo in [("receber", "A receber"), ("contas", "Contas a pagar"), ("extrato", "Extrato")] %}
     <a href="{{ url_for('financeiro.caixa', aba=chave) }}"
-       class="rounded-sm border px-2.5 py-1 text-[12.5px] transition-colors {{ 'border-transparent bg-off font-medium text-canvas' if aba == chave else 'border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top' }}">
+       class="-mb-px border-b pb-2 text-[12.5px] transition-colors {{ 'border-amber-500 text-ink' if aba == chave else 'border-transparent text-txt-3 hover:text-txt-2' }}">
       {{ rotulo }}
     </a>
     {% endfor %}
@@ -41,10 +58,10 @@
       {% for ag in a_receber %}
       <div class="flex items-center gap-3 px-4 py-3">
         <div class="flex-1 min-w-0">
-          <div class="text-[13.5px] font-medium text-off truncate">{{ ag.cliente.nome }}</div>
+          <div class="text-[13.5px] font-medium text-ink truncate">{{ ag.cliente.nome }}</div>
           <div class="text-[12px] text-txt-3 truncate">{{ ag.servico.nome }} · {{ ag.data_hora_inicio.strftime("%d/%m %H:%M") }}</div>
         </div>
-        <div class="tabular text-[14px] text-off shrink-0">R$ {{ "%.2f"|format(ag.valor) }}</div>
+        <div class="tabular text-[14px] text-ink shrink-0">R$ {{ "%.2f"|format(ag.valor) }}</div>
         <form method="post" action="{{ url_for('financeiro.registrar_pagamento', agendamento_id=ag.id) }}" class="flex items-center gap-2 shrink-0">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <select name="conta_id" class="bg-surf-1 border border-hair-top rounded-sm px-2 py-1.5 text-[12.5px] text-txt-1 outline-none focus:border-amber-500">
@@ -57,13 +74,15 @@
             <option class="bg-canvas" value="{{ f.value }}">{{ f.value }}</option>
             {% endfor %}
           </select>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] text-[12.5px] font-medium px-3 py-1.5 rounded-chip hover:shadow-amber transition-shadow">Recebi</button>
+          <button type="submit" class="btn-acao text-[12.5px] px-3 py-1.5">Recebi</button>
         </form>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-txt-3 text-sm text-center py-8">Nenhum agendamento realizado aguardando registro de pagamento.</p>
+    <div class="hachura rounded-md py-8 text-center">
+      <p class="text-txt-3 text-sm">Nenhum agendamento realizado aguardando registro de pagamento.</p>
+    </div>
     {% endif %}
   </div>
   <p class="text-txt-3 text-xs mt-2">Agendamentos marcados como "realizado" no Kanban aparecem aqui até o pagamento ser registrado.</p>
@@ -82,7 +101,7 @@
   </div>
 
   <div class="flex justify-end mb-3">
-    <button onclick="document.getElementById('modal-nova-conta').classList.remove('hidden')" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">Nova conta</button>
+    <button onclick="document.getElementById('modal-nova-conta').classList.remove('hidden')" class="btn-acao text-sm px-4 py-2">Nova conta</button>
   </div>
 
   <div class="vidro rounded-lg p-2">
@@ -91,32 +110,37 @@
       {% for c in contas_pagar_abertas %}
       <div class="flex items-center gap-3 px-4 py-3">
         <div class="flex-1 min-w-0">
-          <div class="text-[13.5px] font-medium text-off truncate">
+          <div class="text-[13.5px] font-medium text-ink truncate">
             {{ c.descricao }}
             {% if c.parcelas_total %}<span class="tabular text-[11.5px] text-txt-3">{{ c.parcela_atual }}/{{ c.parcelas_total }}</span>{% endif %}
           </div>
-          <div class="text-[11.5px] text-txt-3">vence {{ c.vencimento.strftime("%d/%m/%Y") }}{% if c.recorrente_mensal %} · mensal{% endif %}</div>
+          <div class="text-[11.5px] text-txt-3 flex items-center gap-1.5 mt-0.5">
+            <span class="selo {{ 'baixa' if c.vencimento < hoje else 'neutro' }}">{{ 'atrasada' if c.vencimento < hoje else 'vence ' + c.vencimento.strftime("%d/%m/%Y") }}</span>
+            {% if c.recorrente_mensal %}<span class="selo neutro">mensal</span>{% endif %}
+          </div>
         </div>
-        <div class="tabular text-[13.5px] text-off shrink-0">R$ {{ "%.2f"|format(c.valor) }}</div>
+        <div class="tabular text-[13.5px] text-ink shrink-0">R$ {{ "%.2f"|format(c.valor) }}</div>
         <form method="post" action="{{ url_for('financeiro.pagar_conta', conta_id=c.id) }}" class="shrink-0">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="rounded-sm border border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top px-2.5 py-1 text-[12.5px] transition-colors">Pagar</button>
         </form>
         <form method="post" action="{{ url_for('financeiro.excluir_conta_pagar', conta_id=c.id) }}" class="shrink-0" onsubmit="return confirm('Excluir esta conta?');">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="text-terra hover:text-terra-500 transition-colors">×</button>
+          <button type="submit" class="text-terra-500 hover:text-terra-700 transition-colors">×</button>
         </form>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-txt-3 text-sm text-center py-8">Nenhuma conta em aberto.</p>
+    <div class="hachura rounded-md py-8 text-center">
+      <p class="text-txt-3 text-sm">Nenhuma conta em aberto.</p>
+    </div>
     {% endif %}
   </div>
 
   <div id="modal-nova-conta" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
     <div class="vidro-solido rounded-lg p-5 max-w-sm w-full">
-      <h3 class="text-off font-medium mb-3">Nova conta a pagar</h3>
+      <h3 class="text-ink font-medium mb-3">Nova conta a pagar</h3>
       <form method="post" action="{{ url_for('financeiro.nova_conta_pagar') }}" class="space-y-3">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="text" name="descricao" placeholder="Descrição" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
@@ -138,8 +162,8 @@
           <input type="number" name="parcelas" value="1" min="1" class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
         </div>
         <div class="flex gap-2 justify-end">
-          <button type="button" onclick="document.getElementById('modal-nova-conta').classList.add('hidden')" class="text-txt-3 hover:text-off px-3 py-2">Cancelar</button>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2">Salvar</button>
+          <button type="button" onclick="document.getElementById('modal-nova-conta').classList.add('hidden')" class="text-txt-3 hover:text-ink px-3 py-2">Cancelar</button>
+          <button type="submit" class="btn-acao px-4 py-2">Salvar</button>
         </div>
       </form>
     </div>
@@ -149,10 +173,10 @@
   <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
     <div class="flex gap-2">
       {% for d, rotulo in [(30, "30 dias"), (60, "60 dias"), (120, "4 meses")] %}
-      <a href="{{ url_for('financeiro.caixa', aba='extrato', dias=d) }}" class="rounded-sm border px-2.5 py-1 text-[12.5px] transition-colors {{ 'border-transparent bg-off font-medium text-canvas' if extrato_dias == d else 'border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top' }}">{{ rotulo }}</a>
+      <a href="{{ url_for('financeiro.caixa', aba='extrato', dias=d) }}" class="rounded-sm border px-2.5 py-1 text-[12.5px] transition-colors {{ 'border-transparent bg-ink font-medium text-canvas' if extrato_dias == d else 'border-hair-top bg-surf-1 text-txt-2 hover:border-hair-top' }}">{{ rotulo }}</a>
       {% endfor %}
     </div>
-    <button onclick="document.getElementById('modal-lancamento').classList.remove('hidden')" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">Novo lançamento</button>
+    <button onclick="document.getElementById('modal-lancamento').classList.remove('hidden')" class="btn-acao text-sm px-4 py-2">Novo lançamento</button>
   </div>
 
   <div class="vidro rounded-lg p-2">
@@ -162,29 +186,31 @@
       <div class="flex items-center gap-3 px-4 py-2.5">
         <span class="tabular text-[12px] text-txt-3 w-[70px] shrink-0">{{ l.data.strftime("%d/%m/%Y") }}</span>
         <div class="flex-1 min-w-0">
-          <p class="truncate text-[13.5px] text-off">{{ l.descricao }}</p>
+          <p class="truncate text-[13.5px] text-ink">{{ l.descricao }}</p>
           <p class="text-[11.5px] text-txt-3">{{ l.categoria.nome }} · {{ l.conta.nome }}</p>
         </div>
-        <span class="tabular text-[13.5px] shrink-0 {{ 'text-leaf-300' if l.tipo.value == 'entrada' else 'text-terra' }}">
+        <span class="tabular text-[13.5px] shrink-0 {{ 'text-leaf-700' if l.tipo.value == 'entrada' else 'text-terra-500' }}">
           {{ "+" if l.tipo.value == "entrada" else "−" }} R$ {{ "%.2f"|format(l.valor) }}
         </span>
         {% if l.origem == OrigemLancamento.MANUAL %}
         <form method="post" action="{{ url_for('financeiro.excluir_lancamento', lancamento_id=l.id) }}" class="shrink-0">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="text-txt-3 hover:text-terra transition-colors" title="Excluir">×</button>
+          <button type="submit" class="text-txt-3 hover:text-terra-500 transition-colors" title="Excluir">×</button>
         </form>
         {% endif %}
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-txt-3 text-sm text-center py-8">Nenhum lançamento neste período.</p>
+    <div class="hachura rounded-md py-8 text-center">
+      <p class="text-txt-3 text-sm">Nenhum lançamento neste período.</p>
+    </div>
     {% endif %}
   </div>
 
   <div id="modal-lancamento" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
     <div class="vidro-solido rounded-lg p-5 max-w-sm w-full">
-      <h3 class="text-off font-medium mb-3">Novo lançamento</h3>
+      <h3 class="text-ink font-medium mb-3">Novo lançamento</h3>
       <form method="post" action="{{ url_for('financeiro.novo_lancamento') }}" class="space-y-3">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <select name="tipo" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
@@ -207,8 +233,8 @@
         </div>
         <input type="text" name="descricao" placeholder="O que foi" required class="w-full bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
         <div class="flex gap-2 justify-end">
-          <button type="button" onclick="document.getElementById('modal-lancamento').classList.add('hidden')" class="text-txt-3 hover:text-off px-3 py-2">Cancelar</button>
-          <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2">Lançar</button>
+          <button type="button" onclick="document.getElementById('modal-lancamento').classList.add('hidden')" class="text-txt-3 hover:text-ink px-3 py-2">Cancelar</button>
+          <button type="submit" class="btn-acao px-4 py-2">Lançar</button>
         </div>
       </form>
     </div>

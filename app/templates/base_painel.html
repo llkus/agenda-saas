@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="flex flex-col md:flex-row md:h-screen items-stretch gap-3 md:gap-4 p-3 md:p-4">
-  {% include "partials/_sidebar.html" %}
-  <main class="flex-1 min-w-0 min-h-0 overflow-y-auto px-3 py-4 md:px-6 md:py-6">
+{# Menu no topo (era barra lateral), conteúdo numa coluna centrada. #}
+<div class="min-h-screen flex flex-col">
+  {% include "partials/_topbar.html" %}
+  <main class="flex-1 w-full max-w-[1240px] mx-auto px-4 md:px-6 pt-4 md:pt-5 pb-10">
     {% block painel_content %}{% endblock %}
   </main>
 </div>

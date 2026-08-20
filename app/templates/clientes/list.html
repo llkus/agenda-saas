@@ -4,36 +4,56 @@
 <div class="max-w-3xl mx-auto pb-12">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-3xl font-light text-off">Clientes</h1>
+      <h1 class="text-3xl font-light text-ink">Clientes</h1>
       <p class="text-txt-3 text-sm mt-1">{{ clientes|length }} cadastrado{{ "s" if clientes|length != 1 else "" }}</p>
     </div>
-    <a href="{{ url_for('clientes.novo') }}" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+    <a href="{{ url_for('clientes.novo') }}" class="btn-acao text-sm px-4 py-2">
       Novo cliente
     </a>
   </div>
 
-  <div class="vidro rounded-lg p-6">
+  {% set _abas_clientes = [
+    (["clientes.listar", "clientes.novo", "clientes.editar"], url_for("clientes.listar"), "Clientes"),
+    (["recorrencias.listar", "recorrencias.novo"], url_for("recorrencias.listar"), "Clientes fixos"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_clientes %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="vidro rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
     <table class="w-full text-sm min-w-[480px]">
       <thead>
-        <tr class="text-left text-txt-3 border-b border-hair">
-          <th class="py-2 font-normal">Nome</th>
-          <th class="py-2 font-normal">Telefone</th>
-          <th class="py-2"></th>
+        <tr class="text-left border-b border-hair">
+          <th class="eyebrow font-medium px-4 py-2.5">Nome</th>
+          <th class="eyebrow font-medium px-3 py-2.5">Telefone</th>
+          <th class="px-4 py-2.5"></th>
         </tr>
       </thead>
       <tbody>
         {% for cliente in clientes %}
-        <tr class="border-b border-hair last:border-0">
-          <td class="py-3 text-txt-1">{{ cliente.nome }}</td>
-          <td class="py-3 text-txt-2">{{ cliente.telefone }}</td>
-          <td class="py-3 text-right space-x-3">
-            <a href="{{ url_for('clientes.editar', cliente_id=cliente.id) }}" class="text-txt-2 hover:text-off transition-colors">Editar</a>
-            <form method="post" action="{{ url_for('clientes.excluir', cliente_id=cliente.id) }}" class="inline"
-                  onsubmit="return confirm('Excluir este cliente?');">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="text-terra hover:text-terra-500 transition-colors">Excluir</button>
-            </form>
+        <tr class="border-b border-hair last:border-0 hover:bg-surf-1 transition-colors">
+          <td class="px-4 py-3 text-ink font-medium">{{ cliente.nome }}</td>
+          <td class="px-3 py-3 text-txt-2 tabular">{{ cliente.telefone }}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center justify-end gap-2">
+              <a href="{{ url_for('clientes.editar', cliente_id=cliente.id) }}" class="btn-circulo" title="Editar cliente">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </a>
+              <form method="post" action="{{ url_for('clientes.excluir', cliente_id=cliente.id) }}" class="inline"
+                    onsubmit="return confirm('Excluir este cliente?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-circulo" title="Excluir cliente">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
+              </form>
+            </div>
           </td>
         </tr>
         {% else %}

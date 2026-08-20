@@ -4,13 +4,29 @@
 <div class="max-w-3xl mx-auto pb-12">
   <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
     <div>
-      <h1 class="text-3xl font-light text-off">Demonstrativo de resultado</h1>
+      <h1 class="text-3xl font-light text-ink">Demonstrativo de resultado</h1>
       <p class="text-txt-3 text-sm mt-1 capitalize">{{ rotulo_periodo }}, em regime de caixa (o que entrou e saiu)</p>
     </div>
     <form method="get" class="flex items-center gap-2">
       <input type="month" name="mes" value="{{ mes_ref.strftime('%Y-%m') }}" onchange="this.form.submit()"
              class="bg-surf-1 border border-hair-top rounded-sm px-3 py-2 text-txt-1 outline-none focus:border-amber-500">
     </form>
+  </div>
+
+  {% set _abas_financeiro = [
+    (["financeiro.caixa"], url_for("financeiro.caixa"), "Caixa"),
+    (["financeiro.plano_de_contas"], url_for("financeiro.plano_de_contas"), "Plano de contas"),
+    (["financeiro.demonstrativos"], url_for("financeiro.demonstrativos"), "Demonstrativos"),
+    (["financeiro.mes_a_mes_view"], url_for("financeiro.mes_a_mes_view"), "Mês a mês"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_financeiro %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
   </div>
 
   <div class="vidro rounded-lg overflow-x-auto">
@@ -24,26 +40,26 @@
       <div class="grid items-baseline gap-3 px-4 {{ 'border-t border-hair py-2.5 bg-surf-1' if l.forte else 'py-1.5' }}" style="grid-template-columns: minmax(0,1fr) 140px 84px;">
         <span class="flex items-baseline gap-2 min-w-0">
           <span class="tabular w-9 shrink-0 text-[11px] text-txt-3">{{ "( " + l.sinal + " )" if l.sinal else "" }}</span>
-          <span class="truncate text-[13.5px] {{ 'font-medium text-off' if l.forte else 'text-txt-2' }}">{{ l.rotulo }}</span>
+          <span class="truncate text-[13.5px] {{ 'font-medium text-ink' if l.forte else 'text-txt-2' }}">{{ l.rotulo }}</span>
         </span>
-        <span class="tabular text-right text-[13.5px] {{ 'font-medium' if l.forte else '' }} {{ 'text-leaf-300' if l.valor >= 0 and l.forte else 'text-terra' if l.valor < 0 and l.forte else 'text-txt-2' }}">
+        <span class="tabular text-right text-[13.5px] {{ 'font-medium' if l.forte else '' }} {{ 'text-leaf-700' if l.valor >= 0 and l.forte else 'text-terra-500' if l.valor < 0 and l.forte else 'text-txt-2' }}">
           R$ {{ "%.2f"|format(l.valor) }}
         </span>
-        <span class="tabular text-right text-[13px] {{ 'font-medium text-off' if l.forte else 'text-txt-3' }}">{{ "%.1f"|format(l.percentual) }}%</span>
+        <span class="tabular text-right text-[13px] {{ 'font-medium text-ink' if l.forte else 'text-txt-3' }}">{{ "%.1f"|format(l.percentual) }}%</span>
       </div>
       {% endfor %}
     </div>
   </div>
 
   <div class="grid gap-3 sm:grid-cols-2 mt-5">
-    <div class="vidro rounded-lg p-4">
+    <div class="kpi-card vidro rounded-lg p-4">
       <div class="eyebrow">margem de contribuição</div>
-      <div class="numero text-[24px] mt-1 text-off">{{ "%.1f"|format(dre.margem_contribuicao_pct) }}%</div>
+      <div class="numero text-[24px] mt-1 text-ink">{{ "%.1f"|format(dre.margem_contribuicao_pct) }}%</div>
       <p class="text-txt-3 text-[12px] mt-1">o que sobra de cada real vendido depois do custo variável</p>
     </div>
-    <div class="vidro rounded-lg p-4">
+    <div class="kpi-card vidro rounded-lg p-4">
       <div class="eyebrow">resultado do período</div>
-      <div class="numero text-[24px] mt-1 {{ 'text-leaf-300' if dre.resultado >= 0 else 'text-terra' }}">R$ {{ "%.2f"|format(dre.resultado) }}</div>
+      <div class="numero text-[24px] mt-1 {{ 'text-leaf-700' if dre.resultado >= 0 else 'text-terra-500' }}">R$ {{ "%.2f"|format(dre.resultado) }}</div>
     </div>
   </div>
 </div>

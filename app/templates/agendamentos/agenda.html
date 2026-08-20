@@ -3,14 +3,29 @@
 {% block painel_content %}
 <div class="max-w-6xl mx-auto pb-12">
   <div class="mb-6">
-    <h1 class="text-3xl font-light text-off">Agenda</h1>
+    <h1 class="text-3xl font-light text-ink">Agenda</h1>
     <div class="flex items-center gap-3 mt-1.5">
-      <a href="{{ url_for('agendamentos.agenda', semana=semana_anterior) }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
+      <a href="{{ url_for('agendamentos.agenda', semana=semana_anterior) }}" class="text-txt-3 hover:text-ink transition-colors">&larr;</a>
       <p class="text-txt-2 text-sm">
         Semana de {{ semana_inicio.strftime("%d/%m") }} a {{ dias[-1].strftime("%d/%m/%Y") }}
       </p>
-      <a href="{{ url_for('agendamentos.agenda', semana=semana_seguinte) }}" class="text-txt-3 hover:text-off transition-colors">&rarr;</a>
+      <a href="{{ url_for('agendamentos.agenda', semana=semana_seguinte) }}" class="text-txt-3 hover:text-ink transition-colors">&rarr;</a>
     </div>
+  </div>
+
+  {% set _abas_agenda = [
+    (["agendamentos.listar", "agendamentos.novo"], url_for("agendamentos.listar"), "Agendamentos"),
+    (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda"),
+    (["agendamentos.kanban"], url_for("agendamentos.kanban"), "Kanban"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_agenda %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
   </div>
 
   <div class="vidro rounded-lg overflow-x-auto p-3">
@@ -43,9 +58,9 @@
         {% for item in agendamentos_por_dia[dia] %}
         {% set status_val = item.ag.status.value %}
         <div class="absolute left-0.5 right-0.5 rounded-sm px-1 py-0.5 text-[10px] leading-tight overflow-hidden border
-                    {{ 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' if status_val == 'confirmado'
-                       else 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if status_val == 'realizado'
-                       else 'bg-terra-500/15 border border-terra-500/30 text-terra' if status_val == 'feedback'
+                    {{ 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-700' if status_val == 'confirmado'
+                       else 'bg-amber-500/15 border border-amber-500/30 text-amber-700' if status_val == 'realizado'
+                       else 'bg-terra-500/15 border border-terra-500/30 text-terra-700' if status_val == 'feedback'
                        else 'bg-surf-2 border-hair-top text-txt-2' }}"
              style="top: {{ item.top_pct }}%; height: {{ item.altura_pct }}%;"
              title="{{ item.ag.cliente.nome }} — {{ item.ag.servico.nome }}">

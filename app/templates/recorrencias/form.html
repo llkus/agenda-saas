@@ -3,7 +3,7 @@
 {% block painel_content %}
 <div class="max-w-md mx-auto pb-12">
   <div class="vidro rounded-lg p-6">
-    <h1 class="text-lg font-medium text-off mb-4">Novo cliente fixo</h1>
+    <h1 class="text-lg font-medium text-ink mb-4">Novo cliente fixo</h1>
 
     <form method="post" class="space-y-4" id="form-recorrencia">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -63,7 +63,7 @@
 
       <div class="flex gap-3 pt-2">
         <button class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2 hover:shadow-amber transition-shadow" type="submit">Salvar regra</button>
-        <a href="{{ url_for('recorrencias.listar') }}" class="text-txt-3 hover:text-off px-4 py-2 transition-colors">Cancelar</a>
+        <a href="{{ url_for('recorrencias.listar') }}" class="text-txt-3 hover:text-ink px-4 py-2 transition-colors">Cancelar</a>
       </div>
     </form>
   </div>
@@ -94,8 +94,8 @@
     previaLista.innerHTML = ocorrencias.map(oc => {
       const data = new Date(oc.data + "T00:00:00").toLocaleDateString("pt-BR");
       const status = oc.cabe
-        ? '<span class="px-2 py-0.5 rounded-chip text-[11px] bg-leaf-500/15 border border-leaf-500/30 text-leaf-300">cabe</span>'
-        : `<span class="text-terra text-[12px]">${oc.impedimento}</span>`;
+        ? '<span class="selo alta">cabe</span>'
+        : `<span class="text-terra-500 text-[12px]">${oc.impedimento}</span>`;
       return `<div class="flex items-baseline justify-between"><span class="text-txt-2">${data}</span>${status}</div>`;
     }).join("");
     previa.classList.remove("hidden");

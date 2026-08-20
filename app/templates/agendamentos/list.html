@@ -4,16 +4,31 @@
 <div class="max-w-4xl mx-auto pb-12">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-3xl font-light text-off">Agendamentos</h1>
+      <h1 class="text-3xl font-light text-ink">Agendamentos</h1>
       <div class="flex items-center gap-3 mt-1.5">
-        <a href="{{ url_for('agendamentos.listar', data=dia_anterior.isoformat()) }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
+        <a href="{{ url_for('agendamentos.listar', data=dia_anterior.isoformat()) }}" class="text-txt-3 hover:text-ink transition-colors">&larr;</a>
         <p class="text-txt-2 text-sm">{{ dia.strftime("%d/%m/%Y") }}</p>
-        <a href="{{ url_for('agendamentos.listar', data=dia_seguinte.isoformat()) }}" class="text-txt-3 hover:text-off transition-colors">&rarr;</a>
+        <a href="{{ url_for('agendamentos.listar', data=dia_seguinte.isoformat()) }}" class="text-txt-3 hover:text-ink transition-colors">&rarr;</a>
       </div>
     </div>
     <a href="{{ url_for('agendamentos.novo') }}" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
       Novo agendamento
     </a>
+  </div>
+
+  {% set _abas_agenda = [
+    (["agendamentos.listar", "agendamentos.novo"], url_for("agendamentos.listar"), "Agendamentos"),
+    (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda"),
+    (["agendamentos.kanban"], url_for("agendamentos.kanban"), "Kanban"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_agenda %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
   </div>
 
   <div class="vidro rounded-lg p-6">
@@ -37,7 +52,8 @@
           <td class="py-3 text-txt-2">{{ ag.servico.nome }}</td>
           <td class="py-3 text-txt-2">R$ {{ "%.2f"|format(ag.valor) }}</td>
           <td class="py-3">
-            <span class="px-2.5 py-0.5 rounded-chip text-xs bg-surf-2 border border-hair text-txt-2">
+            {% set sv = ag.status.value %}
+            <span class="selo {{ 'alta' if sv == 'confirmado' else 'escuro' if sv == 'realizado' else 'clara' if sv == 'feedback' else 'baixa' if sv == 'cancelado' else 'neutro' }}">
               {{ ag.status.value.replace("_", " ") }}
             </span>
           </td>
@@ -46,20 +62,20 @@
             <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="status" value="confirmado">
-              <button type="submit" class="text-leaf-300 hover:text-leaf-500 transition-colors">Confirmar</button>
+              <button type="submit" class="text-leaf-700 hover:text-leaf-900 transition-colors">Confirmar</button>
             </form>
             {% endif %}
             {% if ag.status in (StatusAgendamento.A_CONFIRMAR, StatusAgendamento.CONFIRMADO) %}
             <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="status" value="realizado">
-              <button type="submit" class="text-amber-300 hover:text-amber-500 transition-colors">Realizado</button>
+              <button type="submit" class="text-amber-700 hover:text-amber-900 transition-colors">Realizado</button>
             </form>
             <form method="post" action="{{ url_for('agendamentos.alterar_status', agendamento_id=ag.id) }}" class="inline"
                   onsubmit="return confirm('Cancelar este agendamento?');">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="status" value="cancelado">
-              <button type="submit" class="text-terra hover:text-terra-500 transition-colors">Cancelar</button>
+              <button type="submit" class="text-terra-500 hover:text-terra-700 transition-colors">Cancelar</button>
             </form>
             {% endif %}
           </td>

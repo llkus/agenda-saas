@@ -3,7 +3,7 @@
 {% block painel_content %}
 <div class="max-w-3xl mx-auto pb-12">
   <div class="mb-6">
-    <h1 class="text-3xl font-light text-off">Conversas</h1>
+    <h1 class="text-3xl font-light text-ink">Conversas</h1>
     <p class="text-txt-3 text-sm mt-1">Atendimentos feitos pelo agente via WhatsApp</p>
   </div>
 
@@ -13,18 +13,18 @@
       {% for m in ultimas_mensagens %}
       <a href="{{ url_for('conversas.thread', telefone=m.telefone) }}"
          class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-surf-1 transition-colors">
-        <div class="w-9 h-9 rounded-md bg-surf-2 border border-hair flex items-center justify-center shrink-0 text-[12px] font-medium text-leaf-300">
+        <div class="w-9 h-9 rounded-md bg-surf-2 border border-hair flex items-center justify-center shrink-0 text-[12px] font-medium text-leaf-700">
           {{ (m.cliente.nome if m.cliente else m.telefone)[:2]|upper }}
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[13.5px] font-medium text-off truncate">{{ m.cliente.nome if m.cliente else m.telefone }}</div>
+          <div class="text-[13.5px] font-medium text-ink truncate">{{ m.cliente.nome if m.cliente else m.telefone }}</div>
           <div class="text-[12px] text-txt-3 truncate">{{ m.texto }}</div>
         </div>
         {% set modo = estados.get(m.telefone, ModoConversa.BOT) %}
         <span class="px-2.5 py-0.5 rounded-chip text-[11px] shrink-0
-                     {{ 'bg-amber-500/15 border border-amber-500/30 text-amber-300' if modo.value == 'humano'
+                     {{ 'bg-amber-500/15 border border-amber-500/30 text-amber-700' if modo.value == 'humano'
                         else 'bg-surf-2 border border-hair text-txt-3' if modo.value == 'encerrada'
-                        else 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' }}">
+                        else 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-700' }}">
           {{ "com a equipe" if modo.value == "humano" else "encerrada" if modo.value == "encerrada" else "automático" }}
         </span>
         <span class="tabular text-[12px] text-txt-3 shrink-0">{{ (m.criado_em|local).strftime("%d/%m %H:%M") }}</span>
@@ -32,7 +32,10 @@
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-txt-3 text-sm text-center py-8">Nenhuma conversa registrada ainda.</p>
+    <p class="text-txt-3 text-sm text-center py-8">
+      Nenhuma conversa registrada ainda.<br>
+      <span class="text-[12.5px]">Ela aparece aqui assim que um cliente escrever para o WhatsApp da loja.</span>
+    </p>
     {% endif %}
   </div>
 </div>

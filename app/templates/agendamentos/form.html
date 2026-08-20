@@ -3,7 +3,7 @@
 {% block painel_content %}
 <div class="max-w-md mx-auto pb-12">
   <div class="vidro rounded-lg p-6">
-    <h1 class="text-lg font-medium text-off mb-4">Novo agendamento</h1>
+    <h1 class="text-lg font-medium text-ink mb-4">Novo agendamento</h1>
 
     <form method="post" class="space-y-4">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -48,7 +48,7 @@
 
       <div class="flex gap-3 pt-2">
         <button class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2 hover:shadow-amber transition-shadow" type="submit">Salvar</button>
-        <a href="{{ url_for('agendamentos.listar') }}" class="text-txt-3 hover:text-off px-4 py-2 transition-colors">Cancelar</a>
+        <a href="{{ url_for('agendamentos.listar') }}" class="text-txt-3 hover:text-ink px-4 py-2 transition-colors">Cancelar</a>
       </div>
     </form>
   </div>

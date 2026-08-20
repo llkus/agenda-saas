@@ -3,8 +3,23 @@
 {% block painel_content %}
 <div class="max-w-7xl mx-auto pb-12">
   <div class="mb-6">
-    <h1 class="text-3xl font-light text-off">Kanban</h1>
+    <h1 class="text-3xl font-light text-ink">Kanban</h1>
     <p class="text-txt-3 text-sm mt-1">Agendamentos de hoje em diante</p>
+  </div>
+
+  {% set _abas_agenda = [
+    (["agendamentos.listar", "agendamentos.novo"], url_for("agendamentos.listar"), "Agendamentos"),
+    (["agendamentos.agenda"], url_for("agendamentos.agenda"), "Agenda"),
+    (["agendamentos.kanban"], url_for("agendamentos.kanban"), "Kanban"),
+  ] %}
+  <div class="flex flex-wrap gap-2 mb-6 -mt-1">
+    {% for endpoints, href, rotulo in _abas_agenda %}
+    <a href="{{ href }}"
+       class="rounded-chip border px-3.5 py-1.5 text-[13px] transition-colors
+              {{ 'border-transparent bg-ink font-medium text-canvas' if request.endpoint in endpoints else 'border-hair-top bg-surf-1 text-txt-2 hover:text-ink' }}">
+      {{ rotulo }}
+    </a>
+    {% endfor %}
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -16,8 +31,14 @@
 
       <div class="space-y-2">
         {% for ag in colunas[status] %}
-        <div class="kanban-card bg-surf-2 border border-hair-top rounded-md p-3 text-sm cursor-move hover:border-amber-500/50 transition-colors" draggable="true" data-id="{{ ag.id }}">
-          <div class="font-medium text-off">{{ ag.cliente.nome }}</div>
+        {% set sv = ag.status.value %}
+        <div class="kanban-card vidro-solido border border-hair-top rounded-md p-3 text-sm cursor-move hover:border-amber-500/50 transition-colors" draggable="true" data-id="{{ ag.id }}">
+          <div class="flex items-center justify-between gap-2">
+            <div class="font-medium text-ink truncate">{{ ag.cliente.nome }}</div>
+            <span class="selo shrink-0 {{ 'alta' if sv == 'confirmado' else 'escuro' if sv == 'realizado' else 'clara' if sv == 'feedback' else 'baixa' if sv == 'cancelado' else 'neutro' }}">
+              {{ status_labels[ag.status] }}
+            </span>
+          </div>
           <div class="text-txt-2">{{ ag.servico.nome }}</div>
           <div class="text-txt-3 text-xs mt-1">
             {{ ag.data_hora_inicio.strftime("%d/%m %H:%M") }}

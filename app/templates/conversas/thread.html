@@ -3,9 +3,9 @@
 {% block painel_content %}
 <div class="max-w-2xl mx-auto flex flex-col md:h-[calc(100vh-5rem)] pb-4 md:pb-0">
   <div class="mb-4 flex items-center gap-3 shrink-0">
-    <a href="{{ url_for('conversas.listar') }}" class="text-txt-3 hover:text-off transition-colors">&larr;</a>
+    <a href="{{ url_for('conversas.listar') }}" class="text-txt-3 hover:text-ink transition-colors">&larr;</a>
     <div class="flex-1 min-w-0">
-      <h1 class="text-2xl font-light text-off truncate">{{ cliente.nome if cliente else telefone }}</h1>
+      <h1 class="text-2xl font-light text-ink truncate">{{ cliente.nome if cliente else telefone }}</h1>
       <p class="text-txt-3 text-sm mt-1">{{ telefone }}</p>
     </div>
     <div class="shrink-0">
@@ -13,7 +13,7 @@
       <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="modo" value="humano">
-        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-ink hover:bg-surf-3 transition-colors">
           Assumir conversa
         </button>
       </form>
@@ -21,7 +21,7 @@
       <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="modo" value="bot">
-        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-ink hover:bg-surf-3 transition-colors">
           Devolver ao robô
         </button>
       </form>
@@ -29,7 +29,7 @@
       <form method="post" action="{{ url_for('conversas.alternar_modo', telefone=telefone) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="modo" value="bot">
-        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-off hover:bg-surf-3 transition-colors">
+        <button type="submit" class="rounded-chip border border-hair bg-surf-2 px-3.5 py-1.5 text-[12.5px] font-medium text-ink hover:bg-surf-3 transition-colors">
           Reabrir
         </button>
       </form>
@@ -52,14 +52,14 @@
 
     {% if m.remetente.value == "cliente" %}
     <div class="flex justify-start">
-      <div class="max-w-[80%] bg-surf-2 border border-hair rounded-[16px_16px_16px_5px] px-3.5 py-2.5 text-[13.5px] text-off">
+      <div class="max-w-[80%] bg-surf-2 border border-hair rounded-[16px_16px_16px_5px] px-3.5 py-2.5 text-[13.5px] text-ink">
         {{ m.texto }}
         <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ (m.criado_em|local).strftime("%H:%M") }}</div>
       </div>
     </div>
     {% elif m.remetente.value == "robo" %}
     <div class="flex justify-end">
-      <div class="max-w-[80%] bg-surf-2 rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off">
+      <div class="max-w-[80%] bg-surf-2 rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-ink">
         <div class="eyebrow mb-1" style="font-size:9.5px;">robô</div>
         {{ m.texto }}
         <div class="tabular text-[10.5px] text-txt-3 mt-1">{{ (m.criado_em|local).strftime("%H:%M") }}</div>
@@ -67,7 +67,7 @@
     </div>
     {% else %}
     <div class="flex justify-end">
-      <div class="max-w-[80%] rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-off"
+      <div class="max-w-[80%] rounded-[16px_16px_5px_16px] px-3.5 py-2.5 text-[13.5px] text-ink"
            style="background: linear-gradient(145deg, rgba(232,163,61,.13), rgba(62,167,107,.07)); border: 1px solid rgba(232,163,61,.24);">
         <div class="eyebrow mb-1" style="font-size:9.5px; color: #f6c77c;">equipe</div>
         {{ m.texto }}
@@ -85,8 +85,8 @@
       <textarea name="texto" rows="2" required
                 placeholder="Escreva para o cliente. Isso pausa o automático e envia pelo WhatsApp de verdade. Enter envia, Shift+Enter quebra linha."
                 onkeydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); this.form.requestSubmit(); }"
-                class="flex-1 min-h-[52px] resize-none rounded-sm border border-hair-top bg-surf-1 px-2.5 py-2 text-[13.5px] leading-snug outline-none focus:border-amber-500 transition-colors text-off"></textarea>
-      <button type="submit" class="bg-amber-500 text-[#2b1b04] font-medium rounded-chip px-4 py-2.5 hover:shadow-amber transition-shadow shrink-0">Enviar</button>
+                class="flex-1 min-h-[52px] resize-none rounded-sm border border-hair-top bg-white/60 px-2.5 py-2 text-[13.5px] leading-snug outline-none focus:border-preto transition-colors text-ink"></textarea>
+      <button type="submit" class="btn-acao px-5 py-2.5 text-[13.5px] shrink-0">Enviar</button>
     </div>
   </form>
   {% endif %}

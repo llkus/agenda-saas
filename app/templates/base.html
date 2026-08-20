@@ -3,31 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0B100D">
+  <meta name="theme-color" content="#eef5e6">
   <title>{% block title %}Agenda SaaS{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            canvas: "#0b100d",
-            "surf-0": "#0f1512",
-            off: "#f2efe7",
-            "txt-1": "#f2efe7",
-            "txt-2": "#f2efe79e",
-            "txt-3": "#f2efe761",
-            "surf-1": "#ffffff0b",
-            "surf-2": "#ffffff13",
-            "surf-3": "#ffffff1c",
-            hair: "#ffffff17",
-            "hair-top": "#ffffff29",
-            amber: { 300: "#f6c77c", 500: "#e8a33d", 900: "#3a2606" },
-            leaf: { 300: "#7fcb9f", 500: "#3ea76b", 700: "#1f6b42" },
-            terra: { DEFAULT: "#e0876b", 500: "#b44632" },
+            canvas: "#f4f6ef",
+            "grad-verde": "#d3e7c0",
+            "grad-branco": "#ffffff",
+            "grad-laranja": "#fbe4c6",
+            "surf-0": "#ffffff",
+            ink: "#141a16",
+            "txt-1": "#141a16",
+            "txt-2": "#4a544d",
+            "txt-3": "#5c645f",
+            "surf-1": "#141a160c",
+            "surf-2": "#141a1614",
+            "surf-3": "#141a1620",
+            hair: "#141a161f",
+            "hair-top": "#141a1633",
+            amber: { 300: "#f6c77c", 500: "#e8a33d", 700: "#83570f", 900: "#3a2606" },
+            leaf: { 300: "#7fcb9f", 500: "#3ea76b", 700: "#1f6b42", 900: "#14472c" },
+            terra: { DEFAULT: "#e0876b", 500: "#ab422f", 700: "#83321f" },
+            mata: { 500: "#4f8a34", 600: "#457a2c", 700: "#3f6f28", 900: "#24461a" },
+            creme: "#f7ecd9",
+            preto: { DEFAULT: "#131313", 800: "#1e1e1e", 700: "#2a2a2a", 600: "#3a3a3a" },
+            pastel: { 300: "#ddf2ce", 400: "#cbe9b6", 500: "#bfe3a8", 600: "#a5d38b" },
           },
           borderRadius: {
             chip: "999px",
@@ -40,7 +47,9 @@
             sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
           },
           boxShadow: {
-            amber: "0 8px 22px -8px #e8a33da6",
+            amber: "0 8px 20px -10px #e8a33dcc",
+            vidro: "0 22px 48px -30px #1e3a1a66",
+            preto: "0 26px 55px -28px #000000a6",
           },
         },
       },
@@ -52,46 +61,69 @@
       font-weight: 300;
       font-size: 15px;
       line-height: 1.6;
-      background: #0b100d;
-      color: #f2efe7;
+      color: #141a16;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
       position: relative;
-    }
-    body::before {
-      content: "";
-      z-index: 0;
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
       background:
-        radial-gradient(760px 520px at 12% -6%, #3ea76b33, transparent 62%),
-        radial-gradient(680px 480px at 92% 8%, #e8a33d26, transparent 62%),
-        radial-gradient(900px 700px at 50% 108%, #3ea76b1a, transparent 66%);
+        radial-gradient(1250px 900px at 2% -8%, #c2dfa6 0%, #c2dfa600 58%),
+        radial-gradient(1150px 880px at 100% 104%, #f9d6a4 0%, #f9d6a400 60%),
+        radial-gradient(900px 640px at 78% 4%, #ffffffe6 0%, #ffffff00 55%),
+        linear-gradient(142deg, #e6f2da 0%, #ffffff 46%, #fdeed9 100%);
+      background-attachment: fixed;
     }
     #app-root { position: relative; z-index: 1; }
-    :focus-visible { outline: 2px solid #e8a33d; outline-offset: 2px; border-radius: 4px; }
-    ::selection { background: #3ea76b; color: #0b100d; }
-    * { scrollbar-width: thin; scrollbar-color: #ffffff24 transparent; }
+    :focus-visible { outline: 2px solid #131313; outline-offset: 2px; border-radius: 6px; }
+    ::selection { background: #bfe3a8; color: #131313; }
+    * { scrollbar-width: thin; scrollbar-color: #141a1633 transparent; }
 
-    /* classes de identidade do Maestro — ver COMO-USAR-O-CSS.md */
     .vidro {
-      background: #ffffff0b;
-      border: 1px solid #ffffff17;
-      border-top-color: #ffffff29;
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      box-shadow: 0 18px 44px -18px #000000bf;
+      background: #ffffff8c;
+      border: 1px solid #ffffffa6;
+      border-top-color: #fffffff2;
+      backdrop-filter: blur(26px) saturate(135%);
+      -webkit-backdrop-filter: blur(26px) saturate(135%);
+      box-shadow: 0 22px 48px -30px #1e3a1a66, inset 0 1px 0 #ffffffbf;
     }
     .vidro-solido {
-      border: 1px solid #ffffff17;
-      border-top-color: #ffffff29;
-      background: #151b18;
+      background: #fffffff7;
+      border: 1px solid #ffffffa6;
+      border-top-color: #ffffff;
+      box-shadow: 0 22px 48px -30px #1e3a1a4d;
     }
+
+    .preto {
+      background: #131313;
+      color: #ffffff;
+      border: 1px solid #2a2a2a;
+      border-top-color: #3f3f3f;
+      box-shadow: 0 26px 55px -28px #000000a6;
+    }
+    .preto .eyebrow { color: #ffffffa6; }
+    .preto-empilhado { position: relative; }
+    .preto-empilhado::before {
+      content: "";
+      position: absolute;
+      left: 18px; right: 18px; top: -10px; height: 22px;
+      border-radius: 20px 20px 0 0;
+      background: #131313;
+      opacity: .28;
+      z-index: -1;
+    }
+
+    .hachura {
+      background-image: repeating-linear-gradient(-45deg,
+        #141a1c1a 0 2px, transparent 2px 7px);
+    }
+    .hachura-clara {
+      background-image: repeating-linear-gradient(-45deg,
+        #ffffff40 0 2px, transparent 2px 7px);
+    }
+
     .eyebrow {
       letter-spacing: .14em;
       text-transform: uppercase;
-      color: #f2efe761;
+      color: #5c645f;
       font-size: 11px;
       font-weight: 500;
     }
@@ -99,19 +131,122 @@
       letter-spacing: -.04em;
       font-variant-numeric: tabular-nums;
       font-weight: 300;
-      line-height: 1.1;
+      line-height: 1.05;
     }
     .tabular { font-variant-numeric: tabular-nums; }
+
+    .pilula {
+      background: #ffffffbf;
+      border: 1px solid #ffffffd9;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 28px -20px #1e3a1a80;
+      border-radius: 999px;
+    }
+    .btn-circulo {
+      width: 38px; height: 38px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #ffffffd9;
+      border: 1px solid #ffffffe6;
+      color: #141a16;
+      box-shadow: 0 10px 24px -18px #1e3a1a99;
+      transition: background .15s ease, transform .15s ease;
+      flex-shrink: 0;
+    }
+    .btn-circulo:hover { background: #ffffff; transform: translateY(-1px); }
+    .btn-circulo.escuro {
+      background: #131313; border-color: #2a2a2a; color: #ffffff;
+    }
+    .btn-circulo.escuro:hover { background: #2a2a2a; }
+    .btn-acao {
+      background: #131313; color: #ffffff;
+      border-radius: 999px; font-weight: 500;
+      box-shadow: 0 14px 30px -20px #000000b3;
+      transition: background .15s ease, transform .15s ease;
+    }
+    .btn-acao:hover { background: #2a2a2a; transform: translateY(-1px); }
+
+    #nav-principal .nav-item {
+      border-radius: 999px;
+      padding: 7px 14px;
+      color: #4a544d;
+      white-space: nowrap;
+      transition: background .15s ease, color .15s ease;
+    }
+    #nav-principal .nav-item:hover { background: #141a160f; color: #141a16; }
+    #nav-principal .nav-item.ativo {
+      background: #131313;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    #nav-principal .nav-item.ativo:hover { background: #131313; }
+
+    .menu-config > summary { list-style: none; cursor: pointer; }
+    .menu-config > summary::-webkit-details-marker { display: none; }
+    .menu-config[open] > summary .seta-config { transform: rotate(180deg); }
+    .menu-config .item-config {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 14px;
+      color: #4a544d; white-space: nowrap;
+      transition: background .15s ease, color .15s ease;
+    }
+    .menu-config .item-config:hover { background: #141a160f; color: #141a16; }
+    .menu-config .item-config.ativo { background: #131313; color: #ffffff; font-weight: 500; }
+
+    .selo {
+      font-size: 11.5px; font-weight: 500; line-height: 1.5;
+      border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+      display: inline-block;
+    }
+    .selo.alta   { background: #bfe3a8; color: #131313; }
+    .selo.baixa  { background: #f6dccf; color: #6d2415; }
+    .selo.neutro { background: #141a1614; color: #4a544d; }
+    .selo.escuro { background: #131313; color: #ffffff; }
+    .selo.clara  { background: #ffffffd9; color: #141a16; border: 1px solid #141a1614; }
+
+    .kpi-card {
+      transition: transform .15s ease, box-shadow .15s ease;
+      text-align: left;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 26px 52px -28px #1e3a1a80, inset 0 1px 0 #ffffffbf;
+    }
+    .kpi-icone {
+      width: 30px; height: 30px; border-radius: 11px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #bfe3a8; color: #131313;
+    }
+    .kpi-rotulo {
+      font-size: 10.5px; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; color: #5c645f;
+    }
+
+    .linha-preta { display: flex; align-items: center; gap: 12px; padding: 9px 0; }
+    .chip-icone {
+      width: 34px; height: 34px; border-radius: 999px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #2a2a2a; color: #ffffff;
+    }
+    .ponto-status {
+      width: 20px; height: 20px; border-radius: 999px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #3a3a3a; color: #131313;
+    }
+    .ponto-status.feito { background: #bfe3a8; }
+    .linha-preta.feita .titulo-linha { color: #ffffff73; text-decoration: line-through; }
+    .linha-preta.feita .sub-linha { color: #ffffff73; }
   </style>
 </head>
 <body class="text-txt-1 font-sans min-h-screen">
   <div id="app-root">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div class="max-w-md mx-auto mt-4 space-y-2 px-4">
+        <div class="max-w-md mx-auto pt-4 space-y-2 px-4">
           {% for category, message in messages %}
-            <div class="px-4 py-2 rounded-md text-sm border {{ 'bg-terra-500/15 border-terra-500/30 text-terra' if category == 'error' else 'bg-leaf-500/15 border-leaf-500/30 text-leaf-300' }}">
-              {{ message }}
+            <div class="vidro rounded-chip px-4 py-2 text-sm flex items-center gap-2">
+              <span class="w-2 h-2 rounded-chip shrink-0 {{ 'bg-terra-500' if category == 'error' else 'bg-pastel-600' }}"></span>
+              <span class="{{ 'text-terra-500' if category == 'error' else 'text-txt-2' }}">{{ message }}</span>
             </div>
           {% endfor %}
         </div>

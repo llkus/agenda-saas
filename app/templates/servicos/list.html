@@ -4,45 +4,49 @@
 <div class="max-w-3xl mx-auto pb-12">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-3xl font-light text-off">Serviços</h1>
+      <h1 class="text-3xl font-light text-ink">Serviços</h1>
       <p class="text-txt-3 text-sm mt-1">{{ servicos|length }} cadastrado{{ "s" if servicos|length != 1 else "" }}</p>
     </div>
-    <a href="{{ url_for('servicos.novo') }}" class="bg-amber-500 text-[#2b1b04] text-sm font-medium px-4 py-2 rounded-chip hover:shadow-amber transition-shadow">
+    <a href="{{ url_for('servicos.novo') }}" class="btn-acao text-sm px-4 py-2">
       Novo serviço
     </a>
   </div>
 
-  <div class="vidro rounded-lg p-6">
+  <div class="vidro rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
     <table class="w-full text-sm min-w-[480px]">
       <thead>
-        <tr class="text-left text-txt-3 border-b border-hair">
-          <th class="py-2 font-normal">Nome</th>
-          <th class="py-2 font-normal">Duração</th>
-          <th class="py-2 font-normal">Preço</th>
-          <th class="py-2 font-normal">Status</th>
-          <th class="py-2"></th>
+        <tr class="text-left border-b border-hair">
+          <th class="eyebrow font-medium px-4 py-2.5">Nome</th>
+          <th class="eyebrow font-medium px-3 py-2.5">Duração</th>
+          <th class="eyebrow font-medium px-3 py-2.5">Preço</th>
+          <th class="eyebrow font-medium px-3 py-2.5">Status</th>
+          <th class="px-4 py-2.5"></th>
         </tr>
       </thead>
       <tbody>
         {% for servico in servicos %}
-        <tr class="border-b border-hair last:border-0">
-          <td class="py-3 text-txt-1">{{ servico.nome }}</td>
-          <td class="py-3 text-txt-2">{{ servico.duracao_min }} min</td>
-          <td class="py-3 text-txt-2">R$ {{ "%.2f"|format(servico.preco) }}</td>
-          <td class="py-3">
-            <span class="px-2.5 py-0.5 rounded-chip text-xs {{ 'bg-leaf-500/15 border border-leaf-500/30 text-leaf-300' if servico.ativo else 'bg-surf-2 border border-hair text-txt-3' }}">
+        <tr class="border-b border-hair last:border-0 hover:bg-surf-1 transition-colors">
+          <td class="px-4 py-3 text-ink font-medium">{{ servico.nome }}</td>
+          <td class="px-3 py-3 text-txt-2 tabular">{{ servico.duracao_min }} min</td>
+          <td class="px-3 py-3 text-txt-2 tabular">R$ {{ "%.2f"|format(servico.preco) }}</td>
+          <td class="px-3 py-3">
+            <span class="selo {{ 'alta' if servico.ativo else 'neutro' }}">
               {{ "Ativo" if servico.ativo else "Inativo" }}
             </span>
           </td>
-          <td class="py-3 text-right space-x-3">
-            <a href="{{ url_for('servicos.editar', servico_id=servico.id) }}" class="text-txt-2 hover:text-off transition-colors">Editar</a>
-            <form method="post" action="{{ url_for('servicos.alternar_status', servico_id=servico.id) }}" class="inline">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="text-txt-2 hover:text-off transition-colors">
-                {{ "Desativar" if servico.ativo else "Ativar" }}
-              </button>
-            </form>
+          <td class="px-4 py-3">
+            <div class="flex items-center justify-end gap-2">
+              <a href="{{ url_for('servicos.editar', servico_id=servico.id) }}" class="btn-circulo" title="Editar serviço">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </a>
+              <form method="post" action="{{ url_for('servicos.alternar_status', servico_id=servico.id) }}" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="text-txt-2 hover:text-ink transition-colors text-[12.5px] whitespace-nowrap">
+                  {{ "Desativar" if servico.ativo else "Ativar" }}
+                </button>
+              </form>
+            </div>
           </td>
         </tr>
         {% else %}
