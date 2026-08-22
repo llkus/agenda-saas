@@ -70,6 +70,23 @@ def buscar_mensagens(remote_jid: str, pagina: int, campo: str = "remoteJid") -> 
     return resp.json().get("messages", {"total": 0, "pages": 0, "records": []})
 
 
+def desconectar():
+    base_url, api_key, instance = _config()
+    if not (base_url and api_key and instance):
+        return False
+
+    try:
+        resp = requests.delete(
+            f"{base_url}/instance/logout/{instance}",
+            headers={"apikey": api_key},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return True
+    except requests.RequestException:
+        return False
+
+
 def obter_qrcode():
     base_url, api_key, instance = _config()
     if not (base_url and api_key and instance):

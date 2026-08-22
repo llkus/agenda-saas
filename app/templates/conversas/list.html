@@ -2,9 +2,19 @@
 {% block title %}Conversas — Agenda SaaS{% endblock %}
 {% block painel_content %}
 <div class="max-w-3xl mx-auto pb-12">
-  <div class="mb-6">
-    <h1 class="text-3xl font-light text-ink">Conversas</h1>
-    <p class="text-txt-3 text-sm mt-1">Atendimentos feitos pelo agente via WhatsApp</p>
+  <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-light text-ink">Conversas</h1>
+      <p class="text-txt-3 text-sm mt-1">Atendimentos feitos pelo agente via WhatsApp</p>
+    </div>
+    <form method="post" action="{{ url_for('whatsapp.desconectar_route') }}"
+          onsubmit="return confirm('Desconectar o WhatsApp? O agente para de responder até você escanear o QR code de novo.');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit"
+              class="px-3 py-1.5 rounded-chip text-[12.5px] text-terra-500 hover:text-terra-700 border border-hair hover:border-terra-500/30 transition-colors shrink-0">
+        Desconectar WhatsApp
+      </button>
+    </form>
   </div>
 
   <div class="vidro rounded-lg p-2">
